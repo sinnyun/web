@@ -1,34 +1,53 @@
-方法 2：使用 Vercel 的重定向规则 (vercel.json)
+明白了。如果你只需要主页跳转到404页面，并且需要一个简单的方式来切换回正常主页，可以这样做：
 
-这种方法更灵活，不需要修改你的 index.html 文件，而是通过 Vercel 的配置文件来控制访问。
+**方法一：修改 `vercel.json` (仅跳转主页到 404)**
 
-创建 vercel.json 文件（如果还没有）：
+这种方法最简单，直接修改 `vercel.json` 文件。
 
-在你的项目根目录下创建一个名为 vercel.json 的文件。
-添加重定向规则：
+1.  **`vercel.json` 内容:**
 
-在 vercel.json 文件中添加以下内容：
-
-<JSON>
+```json
 {
-  "rewrites": [
+  "routes": [
     {
-      "source": "/",
-      "destination": "/404.html"
+      "src": "^/$",
+      "dest": "/404.html",
+      "status": 404 //可选，但建议添加
     }
   ]
 }
-确保你的项目根目录下存在 404.html 文件（与方法 1 相同）。
+```
 
-提交和推送：
+**解释:**
 
-提交并推送 vercel.json 文件和 404.html 文件（如果之前没有提交）：
-<BASH>
-git add vercel.json 404.html
-git commit -m "Temporarily redirect to 404 page using vercel.json"
-git push origin main
-Vercel 会读取 vercel.json 文件，并将对根路径 (/) 的所有请求重定向到 404.html 文件。
+*   **`src: "^/$"`**:  只匹配根路径 `/`。 `^` 表示字符串的开头，`$` 表示字符串的结尾，因此只匹配空路径，即主页。
+*   **`dest: "/404.html"`**: 将对根路径的请求路由到 `404.html`。
+*   **`status: 404` (可选，但建议添加)**: 添加这个可以显式指定响应状态码为404，虽然目标文件是404.html，但如果没有这个 status，可能返回200，对于SEO不利。
 
-恢复主页：
+2.  **部署到 Vercel:** 保存 `vercel.json` 并将其推送到你的 Vercel 仓库。Vercel 会自动部署更改。
 
-要恢复主页，只需要从 vercel.json 文件中删除或注释
+3.  **切换回正常主页:**  当你想要恢复正常主页时，只需要修改 `vercel.json`，将其内容修改为以下内容，然后重新部署：
+
+```json
+{
+  "routes": [
+    {
+      "src": "^/$",
+      "dest": "/index.html"
+    }
+  ]
+}
+```
+
+或者，如果你想让所有的请求都正确路由 (包括子页面):
+
+```json
+{
+  "routes": [
+    {
+      "src": "^/$",
+      "dest": "/index.html"
+    },
+    {
+      "src": "/(.*)",
+      "dest": "/
