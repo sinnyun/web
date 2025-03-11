@@ -1,0 +1,114 @@
+<!DOCTYPE html>
+<html lang="zh-CN">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>sinnyun - 作品展示</title>
+    
+    <!-- 网站图标 -->
+    <link rel="icon" type="image/x-icon" href="img/favicon.ico">
+    <link rel="shortcut icon" type="image/x-icon" href="img/favicon.ico">
+    <link rel="apple-touch-icon" href="img/favicon.ico">
+    
+    <!-- 样式文件 -->
+    <link rel="stylesheet" href="css/global.css">
+    <link rel="stylesheet" href="css/navbar.css">
+    <link rel="stylesheet" href="css/projects.css">
+    <link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/5.15.4/css/all.min.css">
+    
+    <!-- SEO配置 -->
+    <script src="js/seoConfig.js"></script>
+    <script>
+        document.addEventListener('DOMContentLoaded', function() {
+            applySEO('projects');
+        });
+    </script>
+    
+    <!-- 其他脚本 -->
+    <script src="js/audioControl.js"></script>
+</head>
+<body>
+    <nav class="navbar">
+        <div class="logo">
+            <a href="index.html">
+                <img src="img/logo_h.svg" alt="PORTFOLIO" class="logo-image">
+            </a>
+        </div>
+        <div class="nav-right">
+            <a href="projects.html" class="projects-link">work</a>
+            <button class="menu-button" onclick="toggleMenu()">
+                <span class="menu-line"></span>
+                <span class="menu-line"></span>
+                <span class="menu-line"></span>
+            </button>
+        </div>
+    </nav>
+
+    <div class="page-banner">
+        <div class="banner-content">
+            <h1>创意项目集</h1>
+            <p>探索独特的设计与创意</p>
+
+        </div>
+        <div class="banner-scroll">
+            Scroll down
+        </div>
+    </div>
+
+    <div class="projects-page">
+        <div class="project-grid" id="project-grid">
+            <!-- 项目卡片将通过 JavaScript 动态生成 -->
+        </div>
+    </div>
+    
+    <script src="js/projectsData.js"></script>
+    <script>
+        // 生成项目卡片
+        function createProjectCards() {
+            const projectGrid = document.getElementById('project-grid');
+            if (!projectGrid) return;
+
+            projects.forEach(project => {
+                const card = document.createElement('div');
+                card.className = 'project-card';
+                card.style.backgroundImage = `url('${project.backgroundImage}')`;
+
+                // 创建内容容器
+                const content = document.createElement('div');
+                content.className = 'project-content';
+
+                // 创建标题
+                const title = document.createElement('h3');
+                title.innerHTML = project.title.replace(/\n/g, '<br>');
+
+                // 创建标签容器
+                const tags = document.createElement('div');
+                tags.className = 'card-tags';
+                project.tags.forEach((tag, index) => {
+                    const tagSpan = document.createElement('span');
+                    tagSpan.className = 'tag';
+                    tagSpan.textContent = tag;
+                    tags.appendChild(tagSpan);
+                });
+
+                // 创建链接包装器
+                const link = document.createElement('a');
+                link.href = `project-detail.html?id=${project.id}`;
+                link.className = 'card-link';
+
+                // 组装DOM
+                content.appendChild(title);
+                content.appendChild(tags);
+                link.appendChild(content);
+                card.appendChild(link);
+                projectGrid.appendChild(card);
+            });
+        }
+
+        // 页面加载时初始化
+        document.addEventListener('DOMContentLoaded', createProjectCards);
+    </script>
+
+    <script src="js/main.js"></script>
+</body>
+</html>
