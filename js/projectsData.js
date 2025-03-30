@@ -250,26 +250,33 @@ function getProjectIndex(id) {
 
 async function loadProjectImages() {
     try {
+        // 设置背景图片（优先加载）
         const bannerImage = document.getElementById('project-banner-image');
         bannerImage.style.backgroundImage = `url('${project.backgroundImage}')`;
 
         const imagesContainer = document.querySelector('.work-images');
         imagesContainer.innerHTML = '';
 
+        // 加载详细图片（使用懒加载）
         const detailImages = await project.detailImages;
         if (detailImages && detailImages.length > 0) {
-            detailImages.forEach((image) => {
+            detailImages.forEach((image, index) => {
                 const imgContainer = document.createElement('div');
-                imgContainer.className = `image-container layout-${image.layout}`;
+                imgContainer.className = `image-container layout-${image.layout} loading`;
                 
                 const img = document.createElement('img');
                 img.className = 'lazy-image';
-                img.dataset.src = image.path;  // 使用data-src代替src
+                img.dataset.src = image.path; // 使用data-src存储真实路径
                 img.alt = project.title;
-                img.loading = "lazy";  // 原生懒加载
+                img.loading = "lazy"; // 原生懒加载支持
                 
                 imgContainer.appendChild(img);
                 imagesContainer.appendChild(imgContainer);
+                
+                // 前3张图片立即加载，其余延迟加载
+                if (index < 3) {
+                    img.src = img.dataset.src;
+                }
             });
             
             // 初始化懒加载观察器
@@ -281,16 +288,18 @@ async function loadProjectImages() {
 }
 
 function initLazyLoad() {
-    const lazyImages = document.querySelectorAll('.lazy-image');
     const observer = new IntersectionObserver((entries) => {
         entries.forEach(entry => {
             if (entry.isIntersecting) {
-                const img = entry.target;
-                img.src = img.dataset.src;
-                img.onload = () => {
-                    img.classList.add('loaded');
-                };
-                observer.unobserve(img);
+                const img = entry.target.querySelector('.lazy-image');
+                if (img && img.dataset.src && !img.src) {
+                    img.src = img.dataset.src;
+                    img.onload = () => {
+                        entry.target.classList.remove('loading');
+                        entry.target.classList.add('loaded');
+                    };
+                }
+                observer.unobserve(entry.target);
             }
         });
     }, {
@@ -298,5 +307,7 @@ function initLazyLoad() {
         threshold: 0.1
     });
 
-    lazyImages.forEach(img => observer.observe(img));
+    document.querySelectorAll('.image-container').forEach(container => {
+        observer.observe(container);
+    });
 }
