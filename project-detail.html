@@ -237,7 +237,10 @@
                             const imageDiv = document.createElement('div');
                             imageDiv.className = `work-image layout-${currentLayout}`;
                             
+                            // 替换为懒加载实现
                             const img = document.createElement('img');
+                            img.dataset.src = image.path; // 使用data-src代替src
+                            img.loading = "lazy"; // 添加原生懒加载支持
                             img.src = image.path;
                             img.alt = project.title;
                             

@@ -601,14 +601,11 @@
         background-color: transparent;
     }
     
-    /* 懒加载图片样式 */
+    /* 懒加载相关样式 */
     .lazy-image {
-        width: 100%;
-        height: auto;
         opacity: 0;
-        transition: opacity 0.8s ease;
+        transition: opacity 0.3s ease;
     }
-    
     .lazy-image.loaded {
         opacity: 1;
     }

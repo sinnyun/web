@@ -260,23 +260,13 @@ async function loadProjectImages() {
         // 加载详细图片（使用懒加载）
         const detailImages = await project.detailImages;
         if (detailImages && detailImages.length > 0) {
+            // 添加图片加载队列控制
+            const loadQueue = [];
             detailImages.forEach((image, index) => {
-                const imgContainer = document.createElement('div');
-                imgContainer.className = `image-container layout-${image.layout} loading`;
-                
-                const img = document.createElement('img');
-                img.className = 'lazy-image';
-                img.dataset.src = image.path; // 使用data-src存储真实路径
-                img.alt = project.title;
-                img.loading = "lazy"; // 原生懒加载支持
-                
-                imgContainer.appendChild(img);
-                imagesContainer.appendChild(imgContainer);
-                
-                // 前3张图片立即加载，其余延迟加载
-                if (index < 3) {
-                    img.src = img.dataset.src;
-                }
+                loadQueue.push({
+                    path: image.path,
+                    priority: index < 3 // 前3张高优先级
+                });
             });
             
             // 初始化懒加载观察器
