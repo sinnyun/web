@@ -283,7 +283,7 @@ function initLazyLoad() {
             if (entry.isIntersecting) {
                 const img = entry.target.querySelector('.lazy-image');
                 if (img && img.dataset.src && !img.src) {
-                    img.src = img.dataset.src;
+                    img.src = img.dataset.src; // ✅ 滚动到视口才加载
                     img.onload = () => {
                         entry.target.classList.remove('loading');
                         entry.target.classList.add('loaded');
@@ -292,12 +292,27 @@ function initLazyLoad() {
                 observer.unobserve(entry.target);
             }
         });
-    }, {
+    }, { 
         rootMargin: '200px',
-        threshold: 0.1
+        threshold: 0.01 
     });
 
+    // 观察所有图片容器
     document.querySelectorAll('.image-container').forEach(container => {
-        observer.observe(container);
+        observer.observe(container); 
     });
 }
+
+detailImages.forEach((image, index) => {
+    const imgContainer = document.createElement('div');
+    imgContainer.className = `image-container layout-${image.layout} loading`;
+    
+    const img = document.createElement('img');
+    img.className = 'lazy-image';
+    img.dataset.src = image.path; // ✅ 使用data-src
+    img.loading = "lazy"; // 原生懒加载支持
+    img.alt = project.title;
+    
+    imgContainer.appendChild(img);
+    imagesContainer.appendChild(imgContainer);
+});
