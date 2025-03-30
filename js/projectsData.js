@@ -26,11 +26,11 @@ function generateProjectImages(projectId) {
 
     // 异步加载所有图片
     async function loadImages() {
-        const formats = ['jpg', 'png', 'webp'];
+        const formats = ['jpg', 'png'];
         const allImages = [];
         
         // 检查所有可能的图片
-        for (let i = 1; i <= 50; i++) { // 扩展到最多50张图片
+        for (let i = 1; i <= 20; i++) { // 扩展到最多50张图片
             for (let j = 1; j <= 3; j++) { // 1-3栏布局
                 for (const format of formats) {
                     const filename = `${i}_${j}.${format}`;
