@@ -1,21 +1,8 @@
 // 辅助函数：生成项目图片路径
 function generateProjectImages(projectId) {
     const baseDir = `./img/project${projectId}`;
-    const images = {
-        detail: [],
-        mini: []
-    };
-
-    // 检查图片是否存在的函数
-    function checkImageExists(url) {
-        return new Promise((resolve) => {
-            const img = new Image();
-            img.onload = () => resolve(true);
-            img.onerror = () => resolve(false);
-            img.src = url;
-        });
-    }
-
+    const project = getProjectById(projectId);
+    
     // 解析文件名获取布局信息
     function parseLayoutInfo(filename) {
         const parts = filename.split(/[_.]/); // 分割文件名和扩展名
@@ -26,26 +13,18 @@ function generateProjectImages(projectId) {
 
     // 异步加载所有图片
     async function loadImages() {
-        const formats = ['jpg', 'png'];
         const allImages = [];
         
-        // 检查所有可能的图片
-        for (let i = 1; i <= 20; i++) { // 扩展到最多50张图片
-            for (let j = 1; j <= 3; j++) { // 1-3栏布局
-                for (const format of formats) {
-                    const filename = `${i}_${j}.${format}`;
-                    const path = `${baseDir}/${filename}`;
-                    const exists = await checkImageExists(path);
-                    if (exists) {
-                        const { order, layout } = parseLayoutInfo(filename);
-                        allImages.push({
-                            path,
-                            order,
-                            layout
-                        });
-                        break;
-                    }
-                }
+        // 直接从项目的imageslist加载图片
+        if (project.imageslist && project.imageslist.length > 0) {
+            for (const filename of project.imageslist) {
+                const path = `${baseDir}/${filename}`;
+                const { order, layout } = parseLayoutInfo(filename);
+                allImages.push({
+                    path,
+                    order,
+                    layout
+                });
             }
         }
 
@@ -84,6 +63,19 @@ const projects = [
             "品酒会",
             "雪茄品鉴"
         ],
+
+        //图片清单
+        imageslist: [
+// 原代码中 `id: 2,` 等写法本身语法没问题，推测可能是在对象字面量之外使用了这种类似键值对的写法导致报错。
+// 以下是检查后的推测，问题可能出在代码中某些对象字面量的定义或者使用场景不符合规范。
+// 这里假设你想在 `imageslist` 中添加图片文件名，需要将这些文件名作为字符串元素添加到数组中。
+            "1_2.jpg", "2_2.jpg", "3_3.jpg", "4_3.jpg", "5_3.jpg",
+             "6_2.png", "7_2.png", "8_1.png", "9_3.jpg", "10_3.jpg",
+             "11_3.jpg", "12_2.jpg", "13_2.jpg"
+            
+        ],
+        
+
         get detailImages() {
             return generateProjectImages(this.id).then(images => images.detail);
         },
@@ -250,26 +242,38 @@ function getProjectIndex(id) {
 
 async function loadProjectImages() {
     try {
-        // 设置背景图片（优先加载）
+        // 从URL获取当前项目ID
+        const urlParams = new URLSearchParams(window.location.search);
+        const projectId = parseInt(urlParams.get('id'));
+        const project = getProjectById(projectId);
+        
+        if (!project) return;
+
+        // 设置背景图片
         const bannerImage = document.getElementById('project-banner-image');
         bannerImage.style.backgroundImage = `url('${project.backgroundImage}')`;
 
         const imagesContainer = document.querySelector('.work-images');
         imagesContainer.innerHTML = '';
 
-        // 加载详细图片（使用懒加载）
+        // 加载详细图片
         const detailImages = await project.detailImages;
         if (detailImages && detailImages.length > 0) {
-            // 添加图片加载队列控制
-            const loadQueue = [];
             detailImages.forEach((image, index) => {
-                loadQueue.push({
-                    path: image.path,
-                    priority: index < 3 // 前3张高优先级
-                });
+                const imgContainer = document.createElement('div');
+                imgContainer.className = `image-container layout-${image.layout} loading`;
+                
+                const img = document.createElement('img');
+                img.className = 'lazy-image';
+                img.dataset.src = image.path;
+                img.loading = "lazy";
+                img.alt = project.title;
+                
+                imgContainer.appendChild(img);
+                imagesContainer.appendChild(imgContainer);
             });
             
-            // 初始化懒加载观察器
+            // 初始化懒加载
             initLazyLoad();
         }
     } catch (error) {
@@ -283,7 +287,7 @@ function initLazyLoad() {
             if (entry.isIntersecting) {
                 const img = entry.target.querySelector('.lazy-image');
                 if (img && img.dataset.src && !img.src) {
-                    img.src = img.dataset.src; // ✅ 滚动到视口才加载
+                    img.src = img.dataset.src;
                     img.onload = () => {
                         entry.target.classList.remove('loading');
                         entry.target.classList.add('loaded');
@@ -297,22 +301,8 @@ function initLazyLoad() {
         threshold: 0.01 
     });
 
-    // 观察所有图片容器
     document.querySelectorAll('.image-container').forEach(container => {
         observer.observe(container); 
     });
 }
 
-detailImages.forEach((image, index) => {
-    const imgContainer = document.createElement('div');
-    imgContainer.className = `image-container layout-${image.layout} loading`;
-    
-    const img = document.createElement('img');
-    img.className = 'lazy-image';
-    img.dataset.src = image.path; // ✅ 使用data-src
-    img.loading = "lazy"; // 原生懒加载支持
-    img.alt = project.title;
-    
-    imgContainer.appendChild(img);
-    imagesContainer.appendChild(imgContainer);
-});
