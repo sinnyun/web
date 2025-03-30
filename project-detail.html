@@ -209,36 +209,43 @@
             // 异步加载图片
             async function loadProjectImages() {
                 try {
-                    // 设置背景图片（静态路径）
+                    // 设置背景图片
                     const bannerImage = document.getElementById('project-banner-image');
                     bannerImage.style.backgroundImage = `url('${project.backgroundImage}')`;
 
-                    // 更新图片
-                    const mainImagesContainer = document.querySelector('.work-images-main');
-                    const gridImagesContainer = document.querySelector('.work-images-grid');
-                    
-                    // 清空容器
-                    mainImagesContainer.innerHTML = '';
-                    gridImagesContainer.innerHTML = '';
+                    // 获取图片容器
+                    const imagesContainer = document.querySelector('.work-images');
+                    imagesContainer.innerHTML = ''; // 清空容器
 
-                    // 加载大图
+                    // 加载详细图片
                     const detailImages = await project.detailImages;
                     if (detailImages && detailImages.length > 0) {
-                        detailImages.forEach(imagePath => {
+                        // 创建图片分组容器
+                        let currentGroup = null;
+                        let currentLayout = null;
+                        
+                        detailImages.forEach((image, index) => {
+                            // 如果布局变化或第一张图片，创建新分组
+                            if (image.layout !== currentLayout || index === 0) {
+                                currentLayout = image.layout;
+                                currentGroup = document.createElement('div');
+                                currentGroup.className = `image-group layout-${currentLayout}`;
+                                imagesContainer.appendChild(currentGroup);
+                            }
+
                             const imageDiv = document.createElement('div');
-                            imageDiv.className = 'work-image';
+                            imageDiv.className = `work-image layout-${currentLayout}`;
                             
                             const img = document.createElement('img');
-                            img.src = imagePath;
+                            img.src = image.path;
                             img.alt = project.title;
                             
-                            // 添加图片加载错误处理
                             img.onerror = () => {
                                 imageDiv.style.display = 'none';
                             };
                             
                             imageDiv.appendChild(img);
-                            mainImagesContainer.appendChild(imageDiv);
+                            currentGroup.appendChild(imageDiv);
                         });
                     }
 

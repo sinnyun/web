@@ -16,41 +16,46 @@ function generateProjectImages(projectId) {
         });
     }
 
+    // 解析文件名获取布局信息
+    function parseLayoutInfo(filename) {
+        const parts = filename.split(/[_.]/); // 分割文件名和扩展名
+        const order = parseInt(parts[0]);
+        const layout = parts.length > 1 ? parseInt(parts[1]) : 1; // 默认为1栏布局
+        return { order, layout };
+    }
+
     // 异步加载所有图片
     async function loadImages() {
-        const formats = ['jpg', 'png'];
+        const formats = ['jpg', 'png', 'webp'];
+        const allImages = [];
         
-        // 检查详细图片（1.jpg/png, 2.jpg/png, ...）
-        for (let i = 1; i <= 30; i++) {
-            let imageFound = false;
-            for (const format of formats) {
-                const path = `${baseDir}/${i}.${format}`;
-                const exists = await checkImageExists(path);
-                if (exists) {
-                    images.detail.push(path);
-                    imageFound = true;
-                    break;
+        // 检查所有可能的图片
+        for (let i = 1; i <= 50; i++) { // 扩展到最多50张图片
+            for (let j = 1; j <= 3; j++) { // 1-3栏布局
+                for (const format of formats) {
+                    const filename = `${i}_${j}.${format}`;
+                    const path = `${baseDir}/${filename}`;
+                    const exists = await checkImageExists(path);
+                    if (exists) {
+                        const { order, layout } = parseLayoutInfo(filename);
+                        allImages.push({
+                            path,
+                            order,
+                            layout
+                        });
+                        break;
+                    }
                 }
             }
-            if (!imageFound) break;
         }
 
-        // 检查小图（m1.jpg/png, m2.jpg/png, ...）
-        for (let i = 1; i <= 30; i++) {
-            let imageFound = false;
-            for (const format of formats) {
-                const path = `${baseDir}/m${i}.${format}`;
-                const exists = await checkImageExists(path);
-                if (exists) {
-                    images.mini.push(path);
-                    imageFound = true;
-                    break;
-                }
-            }
-            if (!imageFound) break;
-        }
-
-        return images;
+        // 按order排序
+        allImages.sort((a, b) => a.order - b.order);
+        
+        return {
+            detail: allImages.filter(img => !img.path.includes('/m')),
+            mini: allImages.filter(img => img.path.includes('/m'))
+        };
     }
 
     return loadImages();
@@ -88,7 +93,7 @@ const projects = [
     },
     {
         id: 2,
-        title: "数字艺术展\n沉浸式体验\n展览",
+        title: "格力\n经销商大会",
         category: "THE WEBSITE",
         tags: ["交互设计", "数字艺术", "体验设计"],
         role: "交互设计总监",
@@ -204,7 +209,7 @@ const projects = [
     },
     {
         id: 6,
-        title: "06社会环境卡\n蜀道难记者从客户",
+        title: "06社会环境卡\n蜀道难報導從客戶",
         category: "THE LIFESTYLE",
         tags: ["空间设计", "艺术策划", "生活美学"],
         role: "艺术总监",

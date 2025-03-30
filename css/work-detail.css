@@ -779,3 +779,46 @@
         font-size: 0.8rem;
     }
 }
+
+/* 图片组样式 */
+.image-group {
+    display: grid;
+    gap: 2vw;
+    margin-bottom: 4vw;
+    width: 100%;
+}
+
+/* 1栏布局 - 全宽 */
+.layout-1 {
+    grid-template-columns: 1fr;
+}
+
+/* 2栏布局 */
+.layout-2 {
+    grid-template-columns: repeat(2, 1fr);
+}
+
+/* 3栏布局 */
+.layout-3 {
+    grid-template-columns: repeat(3, 1fr);
+}
+
+/* 响应式调整 */
+@media (max-width: 768px) {
+    .layout-2, .layout-3 {
+        grid-template-columns: 1fr;
+    }
+}
+
+/* 图片样式 */
+.work-image {
+    position: relative;
+    overflow: hidden;
+}
+
+.work-image img {
+    width: 100%;
+    height: auto;
+    display: block;
+    transition: transform 0.3s ease;
+}
