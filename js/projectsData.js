@@ -247,3 +247,48 @@ function getProjectById(id) {
 function getProjectIndex(id) {
     return projects.findIndex(p => p.id === id);
 }
+
+async function loadProjectImages() {
+    try {
+        // 设置背景图片（保持原样）
+        const bannerImage = document.getElementById('project-banner-image');
+        bannerImage.style.backgroundImage = `url('${project.backgroundImage}')`;
+
+        // 获取图片容器
+        const imagesContainer = document.querySelector('.work-images');
+        imagesContainer.innerHTML = '';
+
+        // 加载详细图片
+        const detailImages = await project.detailImages;
+        if (detailImages && detailImages.length > 0) {
+            detailImages.forEach((image, index) => {
+                const imgContainer = document.createElement('div');
+                imgContainer.className = `image-container layout-${image.layout} loading`;
+                
+                const img = new Image();
+                img.className = 'lazy-image';
+                img.dataset.src = image.path;
+                img.alt = project.title;
+                
+                img.onload = () => {
+                    imgContainer.classList.remove('loading');
+                    imgContainer.classList.add('loaded');
+                };
+                
+                imgContainer.appendChild(img);
+                imagesContainer.appendChild(imgContainer);
+                
+                // 延迟加载非首屏图片
+                if (index > 2) {
+                    setTimeout(() => {
+                        img.src = img.dataset.src;
+                    }, 300 * index);
+                } else {
+                    img.src = img.dataset.src;
+                }
+            });
+        }
+    } catch (error) {
+        console.error('Error loading images:', error);
+    }
+}

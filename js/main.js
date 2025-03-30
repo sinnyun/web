@@ -655,3 +655,27 @@ function initSmoothScroll() {
 document.addEventListener('DOMContentLoaded', () => {
     initSmoothScroll();
 });
+
+// 添加懒加载观察器
+function initImageObserver() {
+    const observer = new IntersectionObserver((entries) => {
+        entries.forEach(entry => {
+            if (entry.isIntersecting) {
+                const img = entry.target.querySelector('.lazy-image');
+                if (img && !img.src && img.dataset.src) {
+                    img.src = img.dataset.src;
+                }
+                observer.unobserve(entry.target);
+            }
+        });
+    }, {
+        threshold: 0.1,
+        rootMargin: '200px'
+    });
+
+    document.querySelectorAll('.image-container').forEach(container => {
+        observer.observe(container);
+    });
+}
+
+document.addEventListener('DOMContentLoaded', initImageObserver);
