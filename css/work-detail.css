@@ -584,29 +584,41 @@
     .image-container {
         position: relative;
         overflow: hidden;
-        background-color: #f5f5f5;
-        transition: all 0.5s ease;
+        margin-bottom: 2rem;
     }
     
-    /* 加载状态 */
-    .image-container.loading {
-        min-height: 300px;
-        opacity: 0.8;
-    }
-    
-    /* 加载完成状态 */
-    .image-container.loaded {
-        opacity: 1;
-        background-color: transparent;
-    }
-    
-    /* 图片样式 */
+    /* 懒加载图片初始状态 */
     .lazy-image {
         width: 100%;
         height: auto;
-        display: block;
         opacity: 0;
-        transition: opacity 0.5s ease;
+        transition: opacity 0.8s ease, transform 0.8s ease;
+        transform: translateY(20px);
+    }
+    
+    /* 加载完成状态 */
+    .lazy-image.loaded {
+        opacity: 1;
+        transform: translateY(0);
+    }
+    
+    /* 加载占位背景 */
+    .image-container::before {
+        content: '';
+        position: absolute;
+        top: 0;
+        left: 0;
+        width: 100%;
+        height: 100%;
+        background: linear-gradient(90deg, #f0f0f0 25%, #e0e0e0 50%, #f0f0f0 75%);
+        background-size: 200% 100%;
+        animation: loading 1.5s infinite;
+        z-index: -1;
+    }
+    
+    @keyframes loading {
+        0% { background-position: 200% 0; }
+        100% { background-position: -200% 0; }
     }
     
     .lazy-image.loaded {
