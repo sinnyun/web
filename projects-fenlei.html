@@ -1,0 +1,236 @@
+<!DOCTYPE html>
+<html lang="zh-CN">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>sinnyun - 作品展示</title>
+    
+    <!-- 网站图标 -->
+    <link rel="icon" type="image/x-icon" href="img/favicon.ico">
+    <link rel="shortcut icon" type="image/x-icon" href="img/favicon.ico">
+    <link rel="apple-touch-icon" href="img/favicon.ico">
+    
+    <!-- 样式文件 -->
+    <link rel="stylesheet" href="css/global.css">
+    <link rel="stylesheet" href="css/navbar.css">
+    <link rel="stylesheet" href="css/projects.css">
+    <link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/5.15.4/css/all.min.css">
+    
+    
+    
+    <!-- SEO配置 -->
+    <script src="js/seoConfig.js"></script>
+    <script>
+        document.addEventListener('DOMContentLoaded', function() {
+            applySEO('projects');
+        });
+    </script>
+    
+    <!-- 其他脚本 -->
+    <script src="js/audioControl.js"></script>
+</head>
+<body>
+    <nav class="navbar">
+        <div class="logo">
+            <a href="index.html">
+                <img src="img/logo_h.svg" alt="PORTFOLIO" class="logo-image">
+            </a>
+        </div>
+        <div class="nav-right">
+            <a href="projects-fenlei.html" class="projects-link">work</a>
+            <button class="menu-button" onclick="toggleMenu()">
+                <span class="menu-line"></span>
+                <span class="menu-line"></span>
+                <span class="menu-line"></span>
+            </button>
+        </div>
+    </nav>
+
+    <div class="page-banner">
+        <div class="banner-content">
+            <h1>创意项目集</h1>
+            <p>探索独特的设计与创意</p>
+        </div>
+        <div class="banner-scroll">
+            Scroll down
+        </div>
+    </div>
+
+    <!-- 添加分类过滤器 -->
+    <!-- 修改后的分类过滤器部分 -->
+    <div class="filter-wrapper">
+        <div class="filter-container">
+            <div class="filter-title">按类别筛选:</div>
+            <div class="filter-tags" id="filter-tags">
+                <!-- 标签按钮将通过JavaScript动态生成 -->
+            </div>
+        </div>
+    </div>
+
+    <div class="projects-page">
+        <div class="project-grid" id="project-grid">
+            <!-- 项目卡片将通过 JavaScript 动态生成 -->
+        </div>
+    </div>
+    
+    <script src="js/projectsData.js"></script>
+    <script>
+        // 定义显示的分类标签及其颜色
+        const filterCategories = [
+            { tag: "品牌设计", color: "#FF5252" }, // 红色
+            { tag: "生活美学", color: "#4CAF50" }, // 绿色
+            { tag: "空间设计", color: "#2196F3" }, // 蓝色
+            { tag: "数字艺术", color: "#9C27B0" }, // 紫色
+            { tag: "生活美学", color: "#4CAF50" }, // 绿色
+            { tag: "空间设计", color: "#2196F3" }, // 蓝色
+            { tag: "数字艺术", color: "#9C27B0" }, // 紫色
+            { tag: "艺术策划", color: "#FF9800" }  // 橙色
+        ];
+
+        // 生成项目卡片
+        function createProjectCards() {
+            const projectGrid = document.getElementById('project-grid');
+            if (!projectGrid) return;
+
+            projects.forEach(project => {
+                const card = document.createElement('div');
+                card.className = 'project-card';
+                card.setAttribute('data-tags', project.tags.join(','));
+                card.style.backgroundImage = `url('${project.backgroundImage}')`;
+
+                // 创建内容容器
+                const content = document.createElement('div');
+                content.className = 'project-content';
+
+                // 创建标题
+                const title = document.createElement('h3');
+                title.innerHTML = project.title.replace(/\n/g, '<br>');
+
+                // 创建标签容器
+                const tags = document.createElement('div');
+                tags.className = 'card-tags';
+                project.tags.forEach((tag, index) => {
+                    const tagSpan = document.createElement('span');
+                    tagSpan.className = 'tag';
+                    tagSpan.textContent = tag;
+                    tags.appendChild(tagSpan);
+                });
+
+                // 创建链接包装器
+                const link = document.createElement('a');
+                link.href = `project-detail.html?id=${project.id}`;
+                link.className = 'card-link';
+
+                // 组装DOM
+                content.appendChild(title);
+                content.appendChild(tags);
+                link.appendChild(content);
+                card.appendChild(link);
+                projectGrid.appendChild(card);
+            });
+        }
+
+        // 手动创建所有过滤器按钮
+        function createFilterTags() {
+            const filterContainer = document.getElementById('filter-tags');
+            if (!filterContainer) {
+                console.error('找不到过滤器容器!');
+                return;
+            }
+            
+            // 清空容器
+            filterContainer.innerHTML = '';
+            
+            // 首先添加"全部"按钮
+            const allButton = document.createElement('button');
+            allButton.className = 'filter-tag active';
+            allButton.setAttribute('data-tag', 'all');
+            allButton.textContent = '全部';
+            allButton.style.setProperty('--filter-color', '#333');
+            
+            // 直接设置点击处理函数
+            allButton.onclick = function() {
+                console.log('点击了全部按钮');
+                filterProjects('all');
+            };
+            
+            filterContainer.appendChild(allButton);
+            
+            // 添加其他分类按钮
+            filterCategories.forEach((category, index) => {
+                console.log(`创建过滤标签 ${index+1}: ${category.tag}`);
+                
+                const button = document.createElement('button');
+                button.className = 'filter-tag';
+                button.setAttribute('data-tag', category.tag);
+                button.textContent = category.tag;
+                
+                // 直接设置行内样式确保颜色应用
+                button.style.setProperty('--filter-color', category.color);
+                
+                // 使用直接的onclick函数
+                button.onclick = function() {
+                    console.log(`点击了 ${category.tag} 按钮`);
+                    filterProjects(category.tag);
+                };
+                
+                filterContainer.appendChild(button);
+            });
+        }
+
+        // 过滤项目函数
+        function filterProjects(tag) {
+            console.log(`正在过滤: ${tag}`);
+            
+            // 更新按钮状态
+            document.querySelectorAll('.filter-tag').forEach(button => {
+                const buttonTag = button.getAttribute('data-tag');
+                if (buttonTag === tag) {
+                    button.classList.add('active');
+                } else {
+                    button.classList.remove('active');
+                }
+            });
+
+            // 过滤项目卡片
+            const projectCards = document.querySelectorAll('.project-card');
+            let visibleCount = 0;
+            
+            projectCards.forEach(card => {
+                const cardTags = card.getAttribute('data-tags').split(',');
+                if (tag === 'all' || cardTags.includes(tag)) {
+                    card.style.display = '';
+                    visibleCount++;
+                } else {
+                    card.style.display = 'none';
+                }
+            });
+            
+            console.log(`显示了 ${visibleCount} 个项目`);
+        }
+
+        // 初始化函数
+        function initializeFilters() {
+            console.log('初始化分类过滤器...');
+            createProjectCards();
+            createFilterTags();
+            filterProjects('all');
+        }
+
+        // 确保DOM加载完成后初始化
+        if (document.readyState === 'loading') {
+            document.addEventListener('DOMContentLoaded', initializeFilters);
+        } else {
+            initializeFilters();
+        }
+         // 在initializeFilters函数中添加
+    window.addEventListener('scroll', function() {
+        const wrapper = document.querySelector('.filter-wrapper');
+        wrapper.classList.toggle('sticky', window.scrollY > 100);
+    });
+    </script>
+
+    <script src="js/main.js"></script>
+   
+</body>
+</html>
