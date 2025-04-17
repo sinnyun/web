@@ -394,9 +394,14 @@ function handleMouseEnter() {
     const circle = document.querySelector('.cursor-circle');
     
     if (dot && circle) {
+        // 先添加hover类，触发初始过渡
         dot.classList.add('hover');
         circle.classList.add('hover');
-        document.body.classList.add('link-hovered');
+        
+        // 延迟添加link-hovered类，实现平滑过渡
+        setTimeout(() => {
+            document.body.classList.add('link-hovered');
+        }, 50);
     }
 }
 
@@ -405,9 +410,14 @@ function handleMouseLeave() {
     const circle = document.querySelector('.cursor-circle');
     
     if (dot && circle) {
-        dot.classList.remove('hover');
-        circle.classList.remove('hover');
+        // 先移除link-hovered类
         document.body.classList.remove('link-hovered');
+        
+        // 延迟移除hover类，保持平滑过渡
+        setTimeout(() => {
+            dot.classList.remove('hover');
+            circle.classList.remove('hover');
+        }, 300);
     }
 }
 
@@ -456,63 +466,76 @@ document.addEventListener('DOMContentLoaded', function() {
 
 // 鼠标样式初始化和更新
 let cursorInitialized = false;
+// 初始化全局变量
+let mouseX = 0;
+let mouseY = 0;
+let dotX = 0;
+let dotY = 0;
+let circleX = 0;
+let circleY = 0;
 
+// 使用localStorage存储鼠标位置，确保在页面刷新和跳转后能够保留
+function saveMousePosition(x, y) {
+    localStorage.setItem('mouseX', x);
+    localStorage.setItem('mouseY', y);
+}
+
+function getStoredMousePosition() {
+    const x = localStorage.getItem('mouseX');
+    const y = localStorage.getItem('mouseY');
+    return {
+        x: x ? parseInt(x) : window.innerWidth / 2,
+        y: y ? parseInt(y) : window.innerHeight / 2
+    };
+}
+
+// 修改初始化函数
 function initCursor(e) {
     const cursor = document.querySelector('.cursor-dot');
     const cursorCircle = document.querySelector('.cursor-circle');
     
     if (!cursor || !cursorCircle) return;
 
-    // 如果已经初始化过，直接更新位置
-    if (cursorInitialized) {
-        cursor.style.left = e.clientX + 'px';
-        cursor.style.top = e.clientY + 'px';
-        cursorCircle.style.left = e.clientX + 'px';
-        cursorCircle.style.top = e.clientY + 'px';
-        return;
+    // 获取鼠标位置 - 优先使用事件参数，其次使用存储的位置
+    let posX, posY;
+    if (e && e.clientX !== undefined) {
+        posX = e.clientX;
+        posY = e.clientY;
+    } else {
+        const storedPos = getStoredMousePosition();
+        posX = storedPos.x;
+        posY = storedPos.y;
     }
 
-    // 初始化时设置样式
+    // 立即设置位置，不使用过渡效果
     cursor.style.transition = 'none';
     cursorCircle.style.transition = 'none';
-    cursor.style.left = e.clientX + 'px';
-    cursor.style.top = e.clientY + 'px';
-    cursorCircle.style.left = e.clientX + 'px';
-    cursorCircle.style.top = e.clientY + 'px';
-
+    
+    cursor.style.transform = `translate(${posX}px, ${posY}px)`;
+    cursorCircle.style.transform = `translate(${posX}px, ${posY}px)`;
+    
+    // 更新全局变量
+    mouseX = posX;
+    mouseY = posY;
+    dotX = posX;
+    dotY = posY;
+    circleX = posX;
+    circleY = posY;
+    
     // 强制重排
     cursor.offsetHeight;
     cursorCircle.offsetHeight;
-
+    
     // 恢复过渡效果
-    cursor.style.transition = 'transform 0.1s ease';
-    cursorCircle.style.transition = 'all 0.15s ease-out';
+    setTimeout(() => {
+        cursor.style.transition = '';
+        cursorCircle.style.transition = '';
+    }, 50);
     
     cursorInitialized = true;
 }
 
-// 页面加载和切换时重置鼠标位置
-document.addEventListener('DOMContentLoaded', () => {
-    document.addEventListener('mousemove', initCursor, { once: true });
-});
-
-// 页面可见性改变时重置鼠标位置
-document.addEventListener('visibilitychange', () => {
-    if (document.visibilityState === 'visible') {
-        cursorInitialized = false;
-        document.addEventListener('mousemove', initCursor, { once: true });
-    }
-});
-
-// 页面切换时重置鼠标位置
-window.addEventListener('pageshow', (event) => {
-    if (event.persisted) {
-        cursorInitialized = false;
-        document.addEventListener('mousemove', initCursor, { once: true });
-    }
-});
-
-// 确保鼠标样式在所有页面上都有效
+// 修改页面加载和切换时的鼠标初始化逻辑
 document.addEventListener('DOMContentLoaded', () => {
     // 创建鼠标元素
     if (!document.querySelector('.cursor-dot')) {
@@ -529,22 +552,29 @@ document.addEventListener('DOMContentLoaded', () => {
     
     // 隐藏默认鼠标
     document.body.style.cursor = 'none';
+    
+    // 使用存储的位置初始化鼠标
+    initCursor();
+    
+    // 监听鼠标移动以更新位置
+    document.addEventListener('mousemove', (e) => {
+        if (!cursorInitialized) {
+            initCursor(e);
+        }
+        
+        // 存储鼠标位置
+        saveMousePosition(e.clientX, e.clientY);
+        
+        // 更新全局变量
+        mouseX = e.clientX;
+        mouseY = e.clientY;
+    });
+    
+    // 确保updateCursor函数被调用
+    updateCursor();
 });
 
-// 更新鼠标跟随效果
-let mouseX = 0;
-let mouseY = 0;
-let dotX = 0;
-let dotY = 0;
-let circleX = 0;
-let circleY = 0;
-
-document.addEventListener('mousemove', (e) => {
-    mouseX = e.clientX;
-    mouseY = e.clientY;
-});
-
-// 平滑更新鼠标位置
+// 更新鼠标跟随效果 - 删除重复的函数定义，只保留这一个
 function updateCursor() {
     const dot = document.querySelector('.cursor-dot');
     const circle = document.querySelector('.cursor-circle');
@@ -558,124 +588,16 @@ function updateCursor() {
         circleX += (mouseX - circleX) * 0.5;
         circleY += (mouseY - circleY) * 0.5;
         
-        dot.style.left = dotX + 'px';
-        dot.style.top = dotY + 'px';
-        circle.style.left = circleX + 'px';
-        circle.style.top = circleY + 'px';
+        // 使用transform而不是left/top，性能更好
+        dot.style.transform = `translate(${dotX}px, ${dotY}px)`;
+        circle.style.transform = `translate(${circleX}px, ${circleY}px)`;
     }
     
     requestAnimationFrame(updateCursor);
 }
 
-// 启动动画
-updateCursor();
-
-// 自定义滚动条
-function initSmoothScroll() {
-    // 检查是否是主页
-    const isHomePage = document.querySelector('.homepage');
-    
-    // 为所有页面添加类，以隐藏默认滚动条
-    document.body.classList.add('smooth-scroll');
-    
-    // 如果是主页则返回，不添加自定义滚动条
-    if (isHomePage) return;
-
-    // 创建滚动条
-    const scrollThumb = document.createElement('div');
-    scrollThumb.className = 'scroll-thumb';
-    document.body.appendChild(scrollThumb);
-
-    // 创建滚动条轨道
-    const scrollTrack = document.createElement('div');
-    scrollTrack.className = 'scroll-track';
-    document.body.appendChild(scrollTrack);
-
-    let isDragging = false;
-    let startY = 0;
-    let startScroll = 0;
-
-    // 更新滚动条位置和高度
-    function updateScrollThumb() {
-        const windowHeight = window.innerHeight;
-        const documentHeight = document.documentElement.scrollHeight;
-        const scrollPercent = window.pageYOffset / (documentHeight - windowHeight);
-        const thumbHeight = Math.max(40, (windowHeight / documentHeight) * windowHeight);
-        
-        scrollThumb.style.height = `${thumbHeight}px`;
-        scrollThumb.style.transform = `translateY(${(windowHeight - thumbHeight) * scrollPercent}px)`;
-    }
-
-    // 处理滚轮事件 - 使用原生滚动
-    window.addEventListener('wheel', () => {
-        requestAnimationFrame(updateScrollThumb);
-    }, { passive: true });
-
-    // 处理滚动条拖动
-    scrollThumb.addEventListener('mousedown', (e) => {
-        isDragging = true;
-        startY = e.clientY;
-        startScroll = window.pageYOffset;
-        scrollThumb.classList.add('dragging');
-        document.body.style.userSelect = 'none';
-    });
-
-    document.addEventListener('mousemove', (e) => {
-        if (!isDragging) return;
-        
-        const deltaY = e.clientY - startY;
-        const windowHeight = window.innerHeight;
-        const documentHeight = document.documentElement.scrollHeight;
-        const maxScroll = documentHeight - windowHeight;
-        
-        // 计算滚动距离，考虑滚动条高度比例
-        const scrollRatio = documentHeight / windowHeight;
-        const newScroll = startScroll + (deltaY * scrollRatio * 1);
-        
-        // 应用滚动，限制在有效范围内
-        window.scrollTo(0, Math.max(0, Math.min(newScroll, maxScroll)));
-        updateScrollThumb();
-    });
-
-    document.addEventListener('mouseup', () => {
-        if (isDragging) {
-            isDragging = false;
-            scrollThumb.classList.remove('dragging');
-            document.body.style.userSelect = '';
-        }
-    });
-
-    // 初始化滚动条
-    updateScrollThumb();
-    window.addEventListener('resize', updateScrollThumb);
-    window.addEventListener('scroll', updateScrollThumb);
-}
-
-// 初始化
-document.addEventListener('DOMContentLoaded', () => {
-    initSmoothScroll();
-});
-
-// 添加懒加载观察器
-function initImageObserver() {
-    const observer = new IntersectionObserver((entries) => {
-        entries.forEach(entry => {
-            if (entry.isIntersecting) {
-                const img = entry.target.querySelector('.lazy-image');
-                if (img && !img.src && img.dataset.src) {
-                    img.src = img.dataset.src;
-                }
-                observer.unobserve(entry.target);
-            }
-        });
-    }, {
-        threshold: 0.1,
-        rootMargin: '200px'
-    });
-
-    document.querySelectorAll('.image-container').forEach(container => {
-        observer.observe(container);
-    });
-}
-
-document.addEventListener('DOMContentLoaded', initImageObserver);
+// 删除之前的重复代码
+// document.addEventListener('mousemove', (e) => {
+//     mouseX = e.clientX;
+//     mouseY = e.clientY;
+// });

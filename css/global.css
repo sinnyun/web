@@ -19,11 +19,11 @@
     position: fixed;
     pointer-events: none;
     z-index: 9999;
-    left: 0;
-    top: 0;
-    transform: translate(-50%, -50%);
+    left: -4px; /* 半径的负值，用于居中 */
+    top: -4px;  /* 半径的负值，用于居中 */
     mix-blend-mode: difference;
-    transition: transform 0.1s ease;
+    will-change: transform;
+    transition: width 0.2s ease, height 0.2s ease, background-color 0.2s ease;
 }
 
 .cursor-circle {
@@ -34,11 +34,11 @@
     position: fixed;
     pointer-events: none;
     z-index: 9998;
-    left: 0;
-    top: 0;
-    transform: translate(-50%, -50%);
-    transition: all 0.15s ease-out;
+    left: -12px; /* 半径的负值，用于居中 */
+    top: -12px;  /* 半径的负值，用于居中 */
+    transition: all 0.3s cubic-bezier(0.16, 1, 0.3, 1);
     mix-blend-mode: difference;
+    will-change: transform;
 }
 
 /* 链接悬停效果 */
@@ -63,9 +63,24 @@ input[type="reset"] {
 body.link-hovered .cursor-circle {
     width: 72px;
     height: 72px;
-    background: #ffffff;
+    background: rgba(255, 255, 255, 1);
     border: none;
     mix-blend-mode: difference;
+    left: -36px; /* 更新为新半径的负值 */
+    top: -36px;  /* 更新为新半径的负值 */
+    transition: all 0.4s cubic-bezier(0.16, 1, 0.3, 1);
+}
+
+/* 添加鼠标悬停时的过渡状态 */
+.cursor-circle.hover {
+    transform: scale(1.05);
+    transition: all 0.2s cubic-bezier(0.16, 1, 0.3, 1);
+}
+
+.cursor-dot.hover {
+    transform: scale(0.8);
+    opacity: 0.8;
+    transition: all 0.2s cubic-bezier(0.16, 1, 0.3, 1);
 }
 
 /* 幻灯片背景动画 */
