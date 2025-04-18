@@ -43,14 +43,14 @@ function generateProjectImages(projectId) {
 const projects = [
     {
         id: 1,
-        title: "Club Raia\n奢华休闲\n会所",
-        category: "THE WEBSITE",
+        title: "都江堰\n首届\n熊猫旅游节",
+        category: "活动全案",
         tags: ["品牌设计", "UI设计", "空间设计"],
         role: "首席设计师",
-        year: "2023",
+        year: "2015",
         backgroundImage: "./img/project1/banner.jpg",
-        summary: "受Art Deco风格启发，Club Raia将优雅与现代完美融合。从音乐、美酒到雪茄，我们精心打造的休闲空间让时光放慢脚步，让故事徐徐展开。",
-        description: "Club Raia是一个融合了Art Deco风格的现代休闲会所。我们在设计中注重细节，将奢华元素与功能性完美结合。空间布局经过精心规划，满足了不同场景的需求，让会员能够在此享受高品质的休闲时光。",
+        summary: "中国四川大熊猫国际生态旅游节暨都江堰首届大熊猫生态旅游节开幕式",
+        description: "中国四川大熊猫国际生态旅游节暨都江堰首届大熊猫生态旅游节，以“世界遗产都江堰 熊猫家园欢乐行”为主题，集公益、文化、旅游为一体，为中外游客带来一系列关于大熊猫文化与都江堰熊猫家族的主题活动。",
         features: [
             "Art Deco风格室内设计",
             "私密会员区域",
@@ -69,7 +69,7 @@ const projects = [
 // 原代码中 `id: 2,` 等写法本身语法没问题，推测可能是在对象字面量之外使用了这种类似键值对的写法导致报错。
 // 以下是检查后的推测，问题可能出在代码中某些对象字面量的定义或者使用场景不符合规范。
 // 这里假设你想在 `imageslist` 中添加图片文件名，需要将这些文件名作为字符串元素添加到数组中。
-            "1_2.jpg", "2_2.jpg", "3_3.jpg", "4_3.jpg", "5_3.jpg",
+            "1_1.jpg", "1_2.jpg", "2_2.jpg", "3_3.jpg", "4_3.jpg", "5_3.jpg",
              "6_2.png", "7_2.png", "8_1.png", "9_3.jpg", "10_3.jpg",
              "11_3.jpg", "12_2.jpg", "13_2.jpg"
             
@@ -91,6 +91,7 @@ const projects = [
         role: "交互设计总监",
         year: "2023",
         backgroundImage: "./img/project2/banner.jpg",
+        
         summary: "突破传统展览形式，创造沉浸式数字艺术体验。通过先进技术与艺术的结合，为观众带来前所未有的视觉盛宴。",
         description: "这是一个革命性的数字艺术项目，融合了最新的交互技术和艺术创作。我们创造了一个能让观众真正参与其中的艺术空间，每个展品都是独特的交互体验。",
         features: [
@@ -249,9 +250,22 @@ async function loadProjectImages() {
         
         if (!project) return;
 
-        // 设置背景图片
+        // 修改这里：使用1_1.jpg作为背景图，并添加错误处理
         const bannerImage = document.getElementById('project-banner-image');
-        bannerImage.style.backgroundImage = `url('${project.backgroundImage}')`;
+        // 构建1_1.jpg的路径
+        const bannerImagePath = `./img/project${projectId}/1_1.jpg`;
+        
+        // 添加图片加载检查，确保图片存在
+        const testImg = new Image();
+        testImg.onload = function() {
+            console.log('成功加载背景图片:', bannerImagePath);
+            bannerImage.style.backgroundImage = `url('${bannerImagePath}')`;
+        };
+        testImg.onerror = function() {
+            console.warn('无法加载1_1.jpg，使用默认背景图');
+            bannerImage.style.backgroundImage = `url('${project.backgroundImage}')`;
+        };
+        testImg.src = bannerImagePath;
 
         const imagesContainer = document.querySelector('.work-images');
         imagesContainer.innerHTML = '';
@@ -261,7 +275,9 @@ async function loadProjectImages() {
         if (detailImages && detailImages.length > 0) {
             detailImages.forEach((image, index) => {
                 const imgContainer = document.createElement('div');
-                imgContainer.className = `image-container layout-${image.layout} loading`;
+                // 添加延迟类，用于错开动画
+                const delayClass = `delay-${index % 5}`; // 创建5个不同的延迟类
+                imgContainer.className = `image-container layout-${image.layout} loading ${delayClass}`;
                 
                 const img = document.createElement('img');
                 img.className = 'lazy-image';
@@ -275,6 +291,11 @@ async function loadProjectImages() {
             
             // 初始化懒加载
             initLazyLoad();
+            
+            // 初始化滚动效果
+            if (typeof initScrollEffects === 'function') {
+                setTimeout(initScrollEffects, 500);
+            }
         }
     } catch (error) {
         console.error('Error loading images:', error);

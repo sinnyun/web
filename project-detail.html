@@ -2,7 +2,6 @@
 <html lang="zh-CN">
 <head>
     <meta charset="UTF-8">
-    <!-- 在head标签中添加 -->
     <meta name="viewport" content="width=device-width, initial-scale=1.0">
     <title>sinnyun - 项目详情</title>
     
@@ -20,6 +19,8 @@
     <!-- SEO配置 -->
     <script src="js/seoConfig.js"></script>
     <script src="js/projectsData.js"></script>
+    <script src="js/scrollEffects.js"></script>
+    
     <script>
         document.addEventListener('DOMContentLoaded', function() {
             // 从URL获取项目ID
@@ -100,7 +101,12 @@
             <div class="work-meta-description">
             <p id="project-description" class="description-text"></p>
         </div>
-            <div class="scroll-down">scroll down</div>
+<div class="scroll-down">
+    <div class="scroll-line">
+        <div class="scroll-dot"></div>
+    </div>
+    <span>scroll down</span>
+</div>
     </div>
     </div>
     </div>
@@ -163,8 +169,7 @@
         }
 
         // 获取URL中的项目ID
-        const urlParams = new URLSearchParams(window.location.search);
-        const projectId = parseInt(urlParams.get('id'));
+        const projectId = parseInt(new URLSearchParams(window.location.search).get('id'));
 
         // 获取项目数据
         const project = getProjectById(projectId);
@@ -210,9 +215,21 @@
             // 异步加载图片
             async function loadProjectImages() {
                 try {
-                    // 设置背景图片
+                    // 设置背景图为1_1.jpg
                     const bannerImage = document.getElementById('project-banner-image');
-                    bannerImage.style.backgroundImage = `url('${project.backgroundImage}')`;
+                    const bannerImagePath = `./img/project${projectId}/1_1.jpg`;
+                    
+                    // 添加图片加载检查，确保图片存在
+                    const testImg = new Image();
+                    testImg.onload = function() {
+                        console.log('成功加载背景图片:', bannerImagePath);
+                        bannerImage.style.backgroundImage = `url('${bannerImagePath}')`;
+                    };
+                    testImg.onerror = function() {
+                        console.warn('无法加载1_1.jpg，使用默认背景图');
+                        bannerImage.style.backgroundImage = `url('${project.backgroundImage}')`;
+                    };
+                    testImg.src = bannerImagePath;
 
                     // 获取图片容器
                     const imagesContainer = document.querySelector('.work-images');
@@ -251,27 +268,33 @@
                             imageDiv.appendChild(img);
                             currentGroup.appendChild(imageDiv);
                         });
+                        
+                        // 图片加载完成后初始化滚动效果
+                        setTimeout(initScrollEffects, 500);
                     }
 
                     // 加载小图网格
                     const miniImages = await project.miniImages;
                     if (miniImages && miniImages.length > 0) {
-                        miniImages.forEach(imagePath => {
-                            const img = document.createElement('img');
-                            img.src = imagePath;
-                            img.alt = project.title;
-                            
-                            // 添加图片加载错误处理
-                            img.onerror = () => {
-                                img.style.display = 'none';
-                            };
-                            
-                            gridImagesContainer.appendChild(img);
-                        });
+                        const gridImagesContainer = document.getElementById('work-images-grid');
+                        if (gridImagesContainer) {
+                            miniImages.forEach(imagePath => {
+                                const img = document.createElement('img');
+                                img.src = imagePath;
+                                img.alt = project.title;
+                                
+                                // 添加图片加载错误处理
+                                img.onerror = () => {
+                                    img.style.display = 'none';
+                                };
+                                
+                                gridImagesContainer.appendChild(img);
+                            });
 
-                        // 根据图片数量调整网格布局
-                        const columnCount = miniImages.length <= 3 ? miniImages.length : 3;
-                        gridImagesContainer.style.gridTemplateColumns = `repeat(${columnCount}, 1fr)`;
+                            // 根据图片数量调整网格布局
+                            const columnCount = miniImages.length <= 3 ? miniImages.length : 3;
+                            gridImagesContainer.style.gridTemplateColumns = `repeat(${columnCount}, 1fr)`;
+                        }
                     }
                 } catch (error) {
                     console.error('Error loading images:', error);
