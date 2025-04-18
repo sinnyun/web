@@ -360,7 +360,7 @@ document.addEventListener('DOMContentLoaded', () => {
         // 确保 projects 数组已加载
         if (typeof projects !== 'undefined') {
             // 指定要显示的项目ID顺序
-            const projectIds = [1, 2, 3, 4, 6, 5];
+            const projectIds = [1, 2, 3, 4, 6, 5];  // 指定要显示的项目ID顺序  // 指定要显示的项目ID顺序// 指定要显示的项目ID顺序// 指定要显示的项目ID顺序
             const slideshow = new Slideshow(slideshowContainer, {
                 projects: projectIds
             });
