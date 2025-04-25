@@ -636,7 +636,7 @@
 
 /* 项目图片样式 */
 .work-images {
-    max-width: 1400px;
+    max-width: 75%;
     margin: 4rem auto;
     padding: 0 40px;
     display: flex;
