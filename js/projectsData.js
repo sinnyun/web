@@ -43,7 +43,7 @@ function generateProjectImages(projectId) {
 const projects = [
     {
         id: 1,
-        title: "都江堰\n首届\n熊猫旅游节",
+        title: "都江堰\n首届\n熊猫旅游-网站建设中占位展示",
         category: "活动全案",
         tags: ["品牌设计", "UI设计", "空间设计"],
         role: "首席设计师",

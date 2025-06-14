@@ -217,7 +217,7 @@
                 try {
                     // 设置背景图为1_1.jpg
                     const bannerImage = document.getElementById('project-banner-image');
-                    const bannerImagePath = `./img/project${projectId}/1_1.jpg`;
+                    const bannerImagePath = `./img/project${projectId}/0.jpg`;
                     
                     // 添加图片加载检查，确保图片存在
                     const testImg = new Image();
@@ -226,7 +226,7 @@
                         bannerImage.style.backgroundImage = `url('${bannerImagePath}')`;
                     };
                     testImg.onerror = function() {
-                        console.warn('无法加载1_1.jpg，使用默认背景图');
+                        console.warn('无法加载 0.jpg，使用默认背景图');
                         bannerImage.style.backgroundImage = `url('${project.backgroundImage}')`;
                     };
                     testImg.src = bannerImagePath;
