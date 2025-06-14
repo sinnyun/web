@@ -1,4 +1,0 @@
-User-agent: *
-Allow: /
-
-Sitemap: https://sinnyun.github.io/web/sitemap.xml
