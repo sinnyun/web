@@ -1,4 +1,3 @@
-// 辅助函数：生成项目图片路径
 function generateProjectImages(projectId) {
     const baseDir = `./img/project${projectId}`;
     const project = getProjectById(projectId);
@@ -31,9 +30,10 @@ function generateProjectImages(projectId) {
         // 按order排序
         allImages.sort((a, b) => a.order - b.order);
         
+        // 返回所有图片，不再区分detail和mini
         return {
-            detail: allImages.filter(img => !img.path.includes('/m')),
-            mini: allImages.filter(img => img.path.includes('/m'))
+            detail: allImages,
+            mini: [] // 保留mini属性但为空数组，以保持兼容性
         };
     }
 
@@ -66,13 +66,10 @@ const projects = [
 
         //图片清单
         imageslist: [
-// 原代码中 `id: 2,` 等写法本身语法没问题，推测可能是在对象字面量之外使用了这种类似键值对的写法导致报错。
-// 以下是检查后的推测，问题可能出在代码中某些对象字面量的定义或者使用场景不符合规范。
-// 这里假设你想在 `imageslist` 中添加图片文件名，需要将这些文件名作为字符串元素添加到数组中。
+            "0.jpg",
             "1_1.jpg", "1_2.jpg", "2_2.jpg", "3_3.jpg", "4_3.jpg", "5_3.jpg",
-             "6_2.png", "7_2.png", "8_1.png", "9_3.jpg", "10_3.jpg",
-             "11_3.jpg", "12_2.jpg", "13_2.jpg"
-            
+            "6_2.png", "7_2.png", "8_1.png", "9_3.jpg", 
+            "10_3.jpg", "11_3.jpg", "12_3.jpg", "13_3.jpg", "14_3.jpg", "15_2.jpg", "16_2.jpg"
         ],
         
 
@@ -106,6 +103,13 @@ const projects = [
             "技术展示",
             "艺术教育"
         ],
+        
+        //图片清单
+        imageslist: [
+            "0.jpg",
+            "1_2.jpg", "2_2.jpg", "3_1.jpg", "4_1.jpg", "5_1.jpg",
+            "6_3.jpg", "7_3.jpg", "8_3.jpg", "9_1.jpg"
+        ],
         get detailImages() {
             return generateProjectImages(this.id).then(images => images.detail);
         },
@@ -134,6 +138,13 @@ const projects = [
             "互动设计",
             "数据分析",
             "决策支持"
+        ],
+        
+        //图片清单
+        imageslist: [
+            "0.jpg",
+            "1_1.jpg", "2_2.jpg", "3_2.jpg", "4_1.jpg",
+            "5_3.jpg", "6_3.jpg", "7_3.jpg", "8_3.jpg", "9_3.jpg", "10_3.jpg"
         ],
         get detailImages() {
             return generateProjectImages(this.id).then(images => images.detail);
@@ -164,6 +175,13 @@ const projects = [
             "绿色认证",
             "员工培训"
         ],
+        
+        //图片清单
+        imageslist: [
+            "0.jpg",
+            "1_1.jpg", "2_2.jpg", "3_2.jpg", "4_1.jpg", "5_1.jpg",
+            "6_1.jpg", "7_1.jpg", "8_1.jpg", "9_1.jpg", "10_1.jpg", "11_1.jpg"
+        ],
         get detailImages() {
             return generateProjectImages(this.id).then(images => images.detail);
         },
@@ -192,6 +210,13 @@ const projects = [
             "创作工作坊",
             "文化沙龙",
             "艺术教育"
+        ],
+        
+        //图片清单
+        imageslist: [
+            "0.jpg",
+            "1_1.jpg", "2_2.jpg", "3_2.jpg", "4_1.jpg", "5_1.jpg", "6_2.jpg", "7_2.jpg",
+            "8_1.jpg", "9_1.jpg", "10_1.jpg", "11_1.jpg", "12_1.jpg", "13_1.jpg"
         ],
         get detailImages() {
             return generateProjectImages(this.id).then(images => images.detail);
@@ -222,6 +247,14 @@ const projects = [
             "活动策划",
             "艺术教育"
         ],
+        
+        //图片清单
+        imageslist: [
+            "0.jpg",
+            "1_1.jpg", "2_2.jpg", "3_2.jpg", "4_1.jpg",
+            "5_1.jpg", "6_1.jpg", "7_1.jpg", "8_1.jpg", "9_1.jpg", "10_1.jpg", 
+            "11_1.jpg", "12_1.jpg", "13_1.jpg", "14_1.jpg", "15_1.jpg", "16_1.jpg"
+        ],
         get detailImages() {
             return generateProjectImages(this.id).then(images => images.detail);
         },
@@ -241,89 +274,5 @@ function getProjectIndex(id) {
     return projects.findIndex(p => p.id === id);
 }
 
-async function loadProjectImages() {
-    try {
-        // 从URL获取当前项目ID
-        const urlParams = new URLSearchParams(window.location.search);
-        const projectId = parseInt(urlParams.get('id'));
-        const project = getProjectById(projectId);
-        
-        if (!project) return;
-
-        // 修改这里：使用1_1.jpg作为背景图，并添加错误处理
-        const bannerImage = document.getElementById('project-banner-image');
-        // 构建1_1.jpg的路径
-        const bannerImagePath = `./img/project${projectId}/1_1.jpg`;
-        
-        // 添加图片加载检查，确保图片存在
-        const testImg = new Image();
-        testImg.onload = function() {
-            console.log('成功加载背景图片:', bannerImagePath);
-            bannerImage.style.backgroundImage = `url('${bannerImagePath}')`;
-        };
-        testImg.onerror = function() {
-            console.warn('无法加载1_1.jpg，使用默认背景图');
-            bannerImage.style.backgroundImage = `url('${project.backgroundImage}')`;
-        };
-        testImg.src = bannerImagePath;
-
-        const imagesContainer = document.querySelector('.work-images');
-        imagesContainer.innerHTML = '';
-
-        // 加载详细图片
-        const detailImages = await project.detailImages;
-        if (detailImages && detailImages.length > 0) {
-            detailImages.forEach((image, index) => {
-                const imgContainer = document.createElement('div');
-                // 添加延迟类，用于错开动画
-                const delayClass = `delay-${index % 5}`; // 创建5个不同的延迟类
-                imgContainer.className = `image-container layout-${image.layout} loading ${delayClass}`;
-                
-                const img = document.createElement('img');
-                img.className = 'lazy-image';
-                img.dataset.src = image.path;
-                img.loading = "lazy";
-                img.alt = project.title;
-                
-                imgContainer.appendChild(img);
-                imagesContainer.appendChild(imgContainer);
-            });
-            
-            // 初始化懒加载
-            initLazyLoad();
-            
-            // 初始化滚动效果
-            if (typeof initScrollEffects === 'function') {
-                setTimeout(initScrollEffects, 500);
-            }
-        }
-    } catch (error) {
-        console.error('Error loading images:', error);
-    }
-}
-
-function initLazyLoad() {
-    const observer = new IntersectionObserver((entries) => {
-        entries.forEach(entry => {
-            if (entry.isIntersecting) {
-                const img = entry.target.querySelector('.lazy-image');
-                if (img && img.dataset.src && !img.src) {
-                    img.src = img.dataset.src;
-                    img.onload = () => {
-                        entry.target.classList.remove('loading');
-                        entry.target.classList.add('loaded');
-                    };
-                }
-                observer.unobserve(entry.target);
-            }
-        });
-    }, { 
-        rootMargin: '200px',
-        threshold: 0.01 
-    });
-
-    document.querySelectorAll('.image-container').forEach(container => {
-        observer.observe(container); 
-    });
-}
+// 图片加载相关功能已移至 imageLoader.js
 
