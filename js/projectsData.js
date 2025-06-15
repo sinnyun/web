@@ -142,7 +142,7 @@ const projects = [
         
         //图片清单
         imageslist: [
-            "0.jpg",
+            
             "1_1.jpg", "2_2.jpg", "3_2.jpg", "4_1.jpg",
             "5_3.jpg", "6_3.jpg", "7_3.jpg", "8_3.jpg", "9_3.jpg", "10_3.jpg"
         ],
@@ -178,7 +178,7 @@ const projects = [
         
         //图片清单
         imageslist: [
-            "0.jpg",
+            
             "1_2.jpg", "2_2.jpg", "3_1.jpg", "4_2.jpg", "5_2.jpg",
             "6_3.jpg", "7_3.jpg", "8_3.jpg", "9_3.jpg", "10_3.jpg", "11_3.jpg"
         ],
@@ -214,7 +214,7 @@ const projects = [
         
         //图片清单
         imageslist: [
-            "0.jpg",
+          
             "1_1.jpg", "2_2.jpg", "3_2.jpg", "4_2.jpg", "5_2.jpg", "6_1.jpg",
             "7_3.jpg", "8_3.jpg", "9_3.jpg", "10_3.jpg", "11_3.jpg", "12_3.jpg", "13_3.jpg"
         ],
@@ -250,7 +250,7 @@ const projects = [
         
         //图片清单
         imageslist: [
-            "0.jpg",
+           
             "1_1.jpg", "2_1.jpg", "3_3.jpg", "4_3.jpg", "5_3.jpg", "6_3.jpg",
             "7_3.jpg", "8_3.jpg", "9_3.jpg", "10_3.jpg", "11_3.jpg", "12_3.jpg", "13_3.jpg", "14_3.jpg", "15_3.jpg", "16_3.jpg"
         ],
