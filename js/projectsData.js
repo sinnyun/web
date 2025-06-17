@@ -14,8 +14,25 @@ function generateProjectImages(projectId) {
     async function loadImages() {
         const allImages = [];
         
-        // 直接从项目的imageslist加载图片
-        if (project.imageslist && project.imageslist.length > 0) {
+        // 从imglist.js获取图片列表
+        const imageFiles = getProjectImages(projectId);
+        
+        if (imageFiles && imageFiles.length > 0) {
+            // 处理每个图片文件
+            for (const filename of imageFiles) {
+                // 排除banner图片
+                if (filename.includes('banner')) continue;
+                
+                const path = `${baseDir}/${filename}`;
+                const { order, layout } = parseLayoutInfo(filename);
+                allImages.push({
+                    path,
+                    order,
+                    layout
+                });
+            }
+        } else if (project.imageslist && project.imageslist.length > 0) {
+            // 如果imglist.js中没有图片，则使用项目中定义的imageslist作为备选
             for (const filename of project.imageslist) {
                 const path = `${baseDir}/${filename}`;
                 const { order, layout } = parseLayoutInfo(filename);

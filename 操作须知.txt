@@ -1,0 +1,2 @@
+生成图片清单
+node scripts/generateImgList.js
