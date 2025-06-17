@@ -25,7 +25,8 @@ function generateImageList() {
                 const ext = path.extname(file).toLowerCase();
                 return ['.jpg', '.jpeg', '.png'].includes(ext) && 
                        !file.includes('banner') &&
-                       !file.includes('work.txt');
+                       !file.includes('work.txt') &&
+                       file !== '0.jpg';  // 明确排除0.jpg
             })
             .sort((a, b) => {
                 // 按数字顺序排序 (1_1.jpg, 2_2.jpg等)

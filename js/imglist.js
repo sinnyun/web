@@ -5,7 +5,6 @@
 
 const projectImages = {
     "1": [
-        "0.jpg",
         "1_1.jpg",
         "1_2.jpg",
         "2_2.jpg",
@@ -25,7 +24,6 @@ const projectImages = {
         "16_2.jpg"
     ],
     "2": [
-        "0.jpg",
         "1.jpg",
         "2 (1).jpg",
         "2 (2).jpg",
@@ -53,7 +51,6 @@ const projectImages = {
         "6 (6).jpg"
     ],
     "3": [
-        "0.jpg",
         "1 (1).jpg",
         "1 (2).jpg",
         "1 (3).jpg",
@@ -74,28 +71,23 @@ const projectImages = {
         "5 (3).png",
         "5 (4).png"
     ],
-    "4": [
-        "0.jpg"
-    ],
-    "5": [
-        "0.jpg"
-    ],
+    "4": [],
+    "5": [],
     "6": [
-        "0.jpg",
-        "huaban.jpg",
-        "盒子网页.jpg",
-        "01-01.jpg",
-        "01-02.jpg",
-        "01-03.jpg",
-        "01-04.jpg",
-        "01-05.jpg",
-        "01-06.jpg",
-        "01-07.jpg",
-        "01-08.jpg",
-        "01-09.jpg",
-        "01-10.jpg",
-        "01-11.jpg",
-        "01-12.jpg"
+        "1_2.jpg",
+        "2_2.jpg",
+        "3_3 .jpg",
+        "4_3.jpg",
+        "5_3.jpg",
+        "6_3.jpg",
+        "7_3.jpg",
+        "8_3.jpg",
+        "9_3.jpg",
+        "10_3.jpg",
+        "12_3.jpg",
+        "13_3.jpg",
+        "14_3.jpg",
+        "15_3.jpg"
     ]
 };
 
