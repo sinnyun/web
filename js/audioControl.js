@@ -42,6 +42,8 @@ function initAudioControl() {
     document.body.appendChild(audioBtn);
 
     // 设置初始状态
+    const savedTime = parseFloat(localStorage.getItem('audioCurrentTime')) || 0;
+    bgAudio.currentTime = savedTime;
     updateAudioButton();
 
     // 处理页面可见性变化
@@ -53,9 +55,9 @@ function initAudioControl() {
         }
     });
 
-    // 处理页面卸载
+    // 保存当前播放时间
     window.addEventListener('beforeunload', () => {
-        bgAudio.pause();
+        localStorage.setItem('audioCurrentTime', bgAudio.currentTime);
     });
 }
 

@@ -358,6 +358,8 @@
     display: flex;
     flex-wrap: wrap;
     gap: 8px;
+    justify-content: center;
+    margin: 0 auto;
 }
 
 /* 基本按钮样式 */
