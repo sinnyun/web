@@ -636,7 +636,7 @@
 
 /* 项目图片样式 */
 .work-images {
-    max-width: 75%;
+    max-width: 100rem;
     margin: 4rem auto;
     padding: 0 40px;
     display: flex;
@@ -658,12 +658,13 @@
         transition: opacity 0.5s ease, transform 0.8s cubic-bezier(0.16, 1, 0.3, 1);
         opacity: 0;
         transform: translateY(30px);
+        
     }
     
     /* 图片进入视口时的动画效果 */
     .image-container.in-view {
         opacity: 1;
-        transform: translateY(0);
+        transform: translateY(20px);
     }
     
     /* 图片滚动时的动效 */
@@ -677,7 +678,8 @@
     
     /* 图片滚动视差效果 */
     .image-container.parallax .lazy-image {
-        transform: translateY(0);
+        transform: translateY(20px);
+        /* transition: transform 0.5s cubic-bezier(1, 1, 2, 2); */
         transition: transform 0.5s cubic-bezier(0.25, 0.46, 0.45, 0.94);
     }
     
