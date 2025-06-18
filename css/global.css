@@ -508,14 +508,33 @@ body {
     padding: 0;
 }
 
-/* 自定义滚动条 - 始终隐藏默认滚动条 */
+/* 显示默认滚动条 */
 * {
-    -ms-overflow-style: none;
-    scrollbar-width: none;
+    -ms-overflow-style: auto;
+    scrollbar-width: auto;
 }
 
 *::-webkit-scrollbar {
-    display: none;
+    display: block;
+    width: 8px;
+    height: 8px;
+    cursor: auto !important;
+}
+
+*::-webkit-scrollbar-track {
+    background: rgba(255, 255, 255, 0.05);
+    cursor: auto !important;
+}
+
+*::-webkit-scrollbar-thumb {
+    background: rgba(255, 255, 255, 0.2);
+    border-radius: 4px;
+    cursor: auto !important;
+}
+
+*::-webkit-scrollbar-thumb:hover {
+    background: rgba(255, 255, 255, 0.3);
+    cursor: auto !important;
 }
 
 /* 自定义滚动条轨道 */
