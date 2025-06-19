@@ -155,28 +155,29 @@ class Slideshow {
         const offset = -index * 16.666666667;
         
         if (immediate) {
-            slidesContainer.style.transition = 'none';
-            slidesContainer.style.transform = `translateX(${offset}%)`;
-            slidesContainer.offsetHeight;
-            slidesContainer.style.transition = 'transform 0.8s cubic-bezier(0.4, 0, 0.2, 1)';
+            gsap.set(slidesContainer, {
+                x: `${offset}%`,
+                immediateRender: true
+            });
             this.initSlideAnimation(index);
         } else {
             // 先重置当前幻灯片的动画
             if (this.slides[this.currentSlide]) {
                 const currentBackground = this.slides[this.currentSlide].querySelector('.slide-background');
                 if (currentBackground) {
-                    currentBackground.style.animation = 'none';
+                    gsap.set(currentBackground, { clearProps: "animation" });
                 }
             }
             
-            slidesContainer.style.transform = `translateX(${offset}%)`;
-            
-            // 等待滑动动画完成后初始化新幻灯片的动画
-            setTimeout(() => {
-                this.initSlideAnimation(index);
-                // 重置导航按钮动画
-                this.resetArrowAnimation();
-            }, 400);
+            gsap.to(slidesContainer, {
+                x: `${offset}%`,
+                duration: 0.8,
+                ease: "power2.inOut",
+                onComplete: () => {
+                    this.initSlideAnimation(index);
+                    this.resetArrowAnimation();
+                }
+            });
         }
         
         // 更新缩略图状态
@@ -187,9 +188,9 @@ class Slideshow {
         this.currentSlide = index;
         
         // 动画结束后清理状态
-        setTimeout(() => {
+        gsap.delayedCall(0.8, () => {
             this.isAnimating = false;
-        }, 800);
+        });
     }
     
     initSlideAnimation(index) {
