@@ -41,8 +41,8 @@ function initScrollEffects() {
     // 使用GSAP的set方法设置初始状态，替代CSS类
     gsap.set(imageContainers, {
         opacity: 0,
-        y: 50,
-        scale: 0.95, // 添加轻微的缩放效果
+        y: 0,
+        scale: 0.6, // 添加轻微的缩放效果
         force3D: true, // 启用3D加速以提高性能
         willChange: "transform, opacity" // 优化渲染性能
     });
@@ -55,9 +55,9 @@ function initScrollEffects() {
             opacity: 1,    // 完全不透明
             y: 0,          // 恢复原位置
             scale: 1,      // 恢复原始大小
-            duration: 1.2, // 稍微延长动画时间
+            duration: 1.1, // 稍微延长动画时间
             stagger: {
-                amount: 0.4, // 总交错时间
+                amount: 0.25, // 总交错时间
                 from: "start", // 从第一个元素开始
                 ease: "power2.inOut" // 交错的缓动函数
             },
@@ -78,7 +78,7 @@ function initScrollEffects() {
         
         // 创建ScrollTrigger实例，控制视差动画
         gsap.fromTo(container, 
-            { y: 0 }, // 起始状态
+            { y: 120 }, // 起始状态
             {
                 y: parallaxAmount, // 目标位置
                 ease: "none", // 线性动画，跟随滚动
@@ -98,7 +98,7 @@ function initScrollEffects() {
         gsap.fromTo(container, 
             { scale: 1 },
             {
-                scale: 1.05, // 轻微放大
+                scale: 1.1, // 轻微放大
                 ease: "sine.inOut",
                 scrollTrigger: {
                     trigger: container,
@@ -111,25 +111,7 @@ function initScrollEffects() {
         );
     });
     
-    // ===== 5. 添加图片标题动画（如果存在） =====
-    const imageCaptions = document.querySelectorAll('.work-image-caption');
-    if (imageCaptions.length > 0) {
-        gsap.set(imageCaptions, { opacity: 0, y: 20 });
         
-        ScrollTrigger.batch(imageCaptions, {
-            onEnter: batch => gsap.to(batch, {
-                opacity: 1,
-                y: 0,
-                duration: 0.8,
-                stagger: 0.1,
-                ease: "back.out(1.7)",
-                delay: 0.2 // 在图片显示后稍微延迟显示标题
-            }),
-            start: "top 90%",
-            once: true
-        });
-    }
-    
     // 输出初始化完成信息
     console.log("GSAP ScrollTrigger 高级动画效果已初始化");
 }

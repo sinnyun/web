@@ -284,6 +284,86 @@
     <script>
         // 注册ScrollTrigger插件
         gsap.registerPlugin(ScrollTrigger);
+
+        // 页面加载动画
+        document.addEventListener('DOMContentLoaded', () => {
+            // work-banner动画
+            gsap.from('.work-banner-image', {
+                opacity: 0,
+                duration: 1.5,
+                ease: 'power2.out'
+            });
+            
+            gsap.from('.work-banner-left h1, .work-category', {
+                y: 50,
+                opacity: 0,
+                duration: 1,
+                stagger: 0.2,
+                delay: 0.3,
+                ease: 'back.out'
+            });
+            
+            gsap.from('.work-meta-item', {
+                y: 30,
+                opacity: 0,
+                duration: 0.8,
+                stagger: 0.15,
+                delay: 0.6,
+                ease: 'power2.out'
+            });
+            
+            gsap.from('.work-meta-description', {
+                y: 30,
+                opacity: 0,
+                duration: 0.8,
+                delay: 1,
+                ease: 'power2.out'
+            });
+            
+            gsap.from('.scroll-down', {
+                y: 20,
+                opacity: 0,
+                duration: 0.8,
+                delay: 1.2,
+                ease: 'power2.out'
+            });
+
+            // work-features动画
+            gsap.from('.features-section h2, .services-section h2', {
+                scrollTrigger: {
+                    trigger: '.work-features',
+                    start: 'top 80%'
+                },
+                y: 50,
+                opacity: 0,
+                duration: 0.8,
+                ease: 'power2.out'
+            });
+            
+            gsap.from('#project-features li', {
+                scrollTrigger: {
+                    trigger: '#project-features',
+                    start: 'top 70%'
+                },
+                y: 30,
+                opacity: 0,
+                duration: 0.6,
+                stagger: 0.1,
+                ease: 'power2.out'
+            });
+            
+            gsap.from('#project-services li', {
+                scrollTrigger: {
+                    trigger: '#project-services',
+                    start: 'top 70%'
+                },
+                y: 30,
+                opacity: 0,
+                duration: 0.6,
+                stagger: 0.1,
+                ease: 'power2.out'
+            });
+        });
     </script>
 </body>
 </html>
