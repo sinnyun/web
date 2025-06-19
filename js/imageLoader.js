@@ -97,9 +97,7 @@ async function loadDetailImages(project) {
         const imageDiv = document.createElement('div');
         imageDiv.className = `work-image layout-${currentLayout}`;
         
-        // 添加延迟类，用于错开动画
-        const delayClass = `delay-${index % 5}`; // 创建5个不同的延迟类
-        imageDiv.classList.add(delayClass);
+        // 不再需要添加延迟类，GSAP的stagger功能会处理动画延迟
         
         // 替换为懒加载实现
         const img = document.createElement('img');
