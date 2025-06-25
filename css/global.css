@@ -1,9 +1,23 @@
-/* 全局样式 */
-* {
-    margin: 0;
-    padding: 0;
-    box-sizing: border-box;
+
+.smallthumb .sItem {
+    filter: grayscale(100%);
+    opacity: 0.5;
 }
+.smallthumb .sItem :active{
+    filter: grayscale(50%);
+    opacity: 1;
+}
+
+.wrapper {
+    width: 100%;
+    height: 100%;
+}
+.container {
+width: 100%;
+height: 100%;
+}
+
+
 
 /* 全局鼠标样式 */
 * {
@@ -45,6 +59,7 @@
 a, 
 .thumbnail,
 button,
+.arrow,
 .menu-button,
 .slide-arrow,
 .lightbox,
@@ -81,39 +96,6 @@ body.link-hovered .cursor-circle {
     transform: scale(0.8);
     opacity: 0.8;
     transition: all 0.2s cubic-bezier(0.16, 1, 0.3, 1);
-}
-
-/* 幻灯片背景动画 */
-.slide {
-    /* 添加基础过渡效果，使背景图在切换时平滑过渡 */
-    transition: transform 0.3s ease;
-    
-    /* 应用背景动画，设置以下属性：
-       - 动画名称：slideBackgroundAnimation
-       - 持续时间：20秒
-       - 重复次数：无限循环
-       - 交替方向：alternate（来回播放）
-       - 缓动函数：ease-in-out（平滑的加速和减速）
-    */
-    animation: slideBackgroundAnimation 20s infinite alternate ease-in-out;
-}
-
-/* 定义背景动画关键帧 */
-@keyframes slideBackgroundAnimation {
-    /* 初始状态：原始大小，无位移 */
-    0% {
-        transform: scale(1) translate(0, 0);
-    }
-    
-    /* 中间状态：放大1.1倍，向左上偏移1% */
-    50% {
-        transform: scale(1.1) translate(-1%, -1%);
-    }
-    
-    /* 结束状态：原始大小，向右下偏移1% */
-    100% {
-        transform: scale(1) translate(1%, 1%);
-    }
 }
 
 /* 通用动画 */
@@ -182,13 +164,13 @@ body.link-hovered .cursor-circle {
     top: 0;
     right: -100%;
     width: 100%;
-    height: 100vh;
-    background: rgba(0, 0, 0, 0.95);
-    -webkit-backdrop-filter: blur(10px);
-    backdrop-filter: blur(10px);
+    height: 100%;
+    background: rgba(0, 0, 0, 0.85);
+    -webkit-backdrop-filter: blur(8px);
+    backdrop-filter: blur(8px);
     transition: right 0.5s ease;
-    z-index: 999;
-    overflow: hidden;
+    z-index: 1000;
+
 }
 
 .menu-panel.active {
@@ -198,8 +180,9 @@ body.link-hovered .cursor-circle {
 .menu-content {
     display: grid;
     grid-template-columns: 45% 55%;
-    height: 100%;
+
     padding: 80px 5vw;
+
 }
 
 .menu-left {
@@ -208,12 +191,12 @@ body.link-hovered .cursor-circle {
     justify-content: center;
     padding: 15rem;
     position: relative;
-    height: 100%;
+
 }
 
 .profile-image {
     width: 100%;
-    height: 100%;
+
     overflow: hidden;
     position: relative;
 }
@@ -226,12 +209,14 @@ body.link-hovered .cursor-circle {
 }
 
 .menu-right {
-    padding: 2rem;
+    padding: 8rem 2rem 2rem 2rem;
     margin-right: 30rem;
     display: flex;
     flex-direction: column;
-    justify-content: center;
-    gap: 4rem;
+    justify-content: flex-start;
+    gap: 2rem;
+    height: 100vh;
+
 }
 
 .menu-section {

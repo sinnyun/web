@@ -115,3 +115,5 @@ function initScrollEffects() {
     // 输出初始化完成信息
     console.log("GSAP ScrollTrigger 高级动画效果已初始化");
 }
+
+window.initScrollEffects = initScrollEffects;

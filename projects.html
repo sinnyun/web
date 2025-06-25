@@ -3,113 +3,621 @@
 <head>
     <meta charset="UTF-8">
     <meta name="viewport" content="width=device-width, initial-scale=1.0">
-    <title>sinnyun - 作品展示</title>
+    <title>sinnyun - 项目详情</title>
     
     <!-- 网站图标 -->
-    <link rel="icon" type="image/x-icon" href="img/favicon.ico">
-    <link rel="shortcut icon" type="image/x-icon" href="img/favicon.ico">
-    <link rel="apple-touch-icon" href="img/favicon.ico">
+    <link rel="icon" type="image/x-icon" href="images/favicon.ico">
+    <link rel="shortcut icon" type="image/x-icon" href="images/favicon.ico">
+    <link rel="apple-touch-icon" href="images/favicon.ico">
     
     <!-- 样式文件 -->
     <link rel="stylesheet" href="css/global.css">
     <link rel="stylesheet" href="css/navbar.css">
-    <link rel="stylesheet" href="css/projects.css">
+    <link rel="stylesheet" href="css/category.css">
     <link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/5.15.4/css/all.min.css">
     
     <!-- SEO配置 -->
     <script src="js/seoConfig.js"></script>
+    <script src="js/imglist.js"></script>
+    <script src="js/projectsData.js"></script>
+    <script src="js/scrollEffects.js"></script>
+    <script src="js/imageLoader.js"></script>
+    
     <script>
         document.addEventListener('DOMContentLoaded', function() {
-            applySEO('projects');
+            // 从URL获取项目ID
+            const urlParams = new URLSearchParams(window.location.search);
+            const projectId = parseInt(urlParams.get('id'));
+            
+            // 获取项目数据
+            const project = projects.find(p => p.id === projectId);
+            
+            if (project) {
+                // 使用项目数据更新SEO
+                applySEO('projectDetail', {
+                    title: project.title,
+                    description: project.description || project.summary,
+                    keywords: project.tags ? project.tags.join(',') : ''
+                });
+                
+                // 更新页面内容
+                document.querySelector('.work-banner-left h1').textContent = project.title;
+                if (project.description) {
+                    document.querySelector('.work-meta-description').textContent = project.description;
+                }
+            } else {
+                // 如果找不到项目，使用默认SEO配置
+                applySEO('projectDetail', {
+                    title: '未找到项目',
+                    description: '抱歉，未找到您请求的项目。',
+                    keywords: 'sinnyun,作品'
+                });
+            }
         });
     </script>
     
     <!-- 其他脚本 -->
     <script src="js/audioControl.js"></script>
+    <style>
+    #overlay-enter {
+      position: fixed;
+      left: 0; top: 0; width: 100vw; height: 100vh;
+      background: red;
+      z-index: 9999;
+      pointer-events: none;
+      transform: translateY(0);
+      transition: none;
+      display: block;
+    }
+    .sidebar-thumbnails {
+      position: fixed;
+      left: 0;
+      top: 50%;
+      transform: translateY(-50%);
+      width: 100px;
+      height: 530px;
+      max-height: 530px;
+      overflow: hidden;
+      background: transparent;
+      z-index: 100;
+      border-radius: 0;
+      box-shadow: none;
+      padding: 10px 0 10px 0;
+      display: flex;
+      flex-direction: column;
+      gap: 10px;
+      scrollbar-width: none;
+      opacity: 0;
+      visibility: hidden;
+      pointer-events: none;
+      transition: opacity 1.25s cubic-bezier(0.77,0,0.175,1), visibility 2s cubic-bezier(0.77,0,0.175,1);
+    }
+    .sidebar-thumbnails.show {
+      opacity: 1;
+      visibility: visible;
+      pointer-events: auto;
+    }
+    .sidebar-thumbnails.hide {
+      opacity: 0;
+      visibility: hidden;
+      pointer-events: none;
+    }
+    .sidebar-thumbnails::-webkit-scrollbar {
+      display: none;
+    }
+    .thumbnails-list {
+      display: flex;
+      flex-direction: column;
+      gap: 10px;
+      transition: transform 0.5s cubic-bezier(0.77,0,0.175,1);
+    }
+    .thumbnail-item {
+      width: 70px;
+      height: 50px;
+      overflow: visible !important;
+      margin-left: 16px;
+      border-radius: 0;
+      cursor: pointer;
+      border: none;
+      background: transparent;
+      filter: grayscale(1) brightness(0.7);
+      opacity: 0.3;
+      transition: filter 0.2s, opacity 0.2s;
+      position: relative !important;
+      z-index: 1;
+      box-sizing: content-box;
+    }
+    .thumbnail-item img {
+      width: 100%;
+      height: 100%;
+      object-fit: cover;
+      display: block;
+      pointer-events: none;
+    }
+    .thumbnail-item.active {
+      filter: none;
+      opacity: 1;
+      z-index: 10;
+    }
+    .thumbnail-item:not(.active):hover {
+      opacity: 1;
+      filter: grayscale(0.5) brightness(0.85);
+    }
+    </style>
 </head>
 <body>
-    <nav class="navbar">
-        <div class="logo">
-            <a href="index.html">
-                <img src="img/logo_h.svg" alt="PORTFOLIO" class="logo-image">
-            </a>
-        </div>
-        <div class="nav-right">
-            <a href="projects.html" class="projects-link">work</a>
-            <button class="menu-button" onclick="toggleMenu()">
-                <span class="menu-line"></span>
-                <span class="menu-line"></span>
-                <span class="menu-line"></span>
-            </button>
-        </div>
-    </nav>
+    <div id="overlay-enter"></div>
+    <!-- 自定义鼠标 -->
+    <div class="cursor-dot"></div>
+    <div class="cursor-circle"></div>
 
-    <div class="page-banner">
-        <div class="banner-content">
-            <h1>创意项目集</h1>
-            <p>探索独特的设计与创意</p>
+    <!-- 新增：缩略图侧边栏 -->
+    <aside class="sidebar-thumbnails">
+      <div class="thumbnails-list" id="thumbnails-list"></div>
+    </aside>
 
+    <div data-barba="wrapper">
+
+    <div data-barba="container" data-barba-namespace="projects">
+
+        <nav class="navbar">
+            <div class="logo">
+                <a href="index.html">
+                    <img src="images/logo_h.svg" alt="PORTFOLIO" class="logo-image">
+                </a>
+            </div>
+            <div class="nav-right">
+                <a href="project_category.html" class="projects-link">work</a>
+                <button class="menu-button" onclick="toggleMenu()">
+                    <span class="menu-line"></span>
+                    <span class="menu-line"></span>
+                    <span class="menu-line"></span>
+                </button>
+            </div>
+        </nav>
+
+
+
+        <!-- 项目横幅 -->
+        <div class="work-banner">
+            <div class="work-banner-image" id="project-banner-image"></div>
+            <div class="work-banner-overlay"></div>
+            <div class="work-banner-content">
+                
+               
+                <div class="work-banner-left">
+                    <div class="work-category">/ THE WEBSITE</div>
+                    <h1 id="project-title"></h1>
+              
+               
+            </div>
+            <div class="work-banner-right">
+            <div class="work-meta">
+                <div class="work-meta-item" id="project-tags"></div>
+                <div class="work-meta-item">
+                    <span class="meta-label">完成时间</span>
+                    <span id="project-year"></span>
+                </div>
+                <div class="work-meta-item">
+                    <span class="meta-label">项目角色</span>
+                    <span id="project-role"></span>
+                </div>
+                <div class="work-meta-description">
+                <p id="project-description" class="description-text"></p>
+            </div>
+    <div class="scroll-down">
+        <div class="scroll-line">
+            <div class="scroll-dot"></div>
         </div>
-        <div class="banner-scroll">
-            Scroll down
+        <span>Scroll down</span>
+    </div>
         </div>
+        </div>
+        </div>
+        </div>
+
+        <!-- 项目详情内容 -->
+        <div class="work-content">
+            <div class="work-features">
+                <div class="features-section">
+                    <h2>项目特点</h2>
+                    <ul id="project-features"></ul>
+                </div>
+                <div class="services-section">
+                    <h2>服务内容</h2>
+                    <ul id="project-services"></ul>
+                </div>
+            </div>
+
+            <div class="work-images">
+                <div class="work-images-main" id="work-images-main"></div>
+                <div class="work-images-grid" id="work-images-grid"></div>
+            </div>
+
+            <div class="work-navigation">
+                <div id="prev-project" class="work-nav-item nav-link">
+                    <div class="nav-background"></div>
+                    <div class="nav-overlay"></div>
+                    <div class="nav-content">
+                        <span class="nav-label">上一个项目</span>
+                       
+                        <h3 class="nav-title"></h3>
+                        <div class="nav-tags" id="prev-tags"></div>
+                    </div>
+                </div>
+                <div id="next-project" class="work-nav-item nav-link">
+                    <div class="nav-background"></div>
+                    <div class="nav-overlay"></div>
+                    <div class="nav-content">
+                        <span class="nav-label">下一个项目</span>
+                        
+                        <h3 class="nav-title"></h3>
+                        <div class="nav-tags" id="next-tags"></div>
+                    </div>
+                </div>
+            </div>
+        </div>
+
     </div>
 
-    <div class="projects-page">
-        <div class="project-grid" id="project-grid">
-            <!-- 项目卡片将通过 JavaScript 动态生成 -->
-        </div>
+
     </div>
-    
-    <script src="js/projectsData.js"></script>
+
+
     <script>
-        // 生成项目卡片
-        function createProjectCards() {
-            const projectGrid = document.getElementById('project-grid');
-            if (!projectGrid) return;
+        // getProjectById 和 getProjectIndex 函数已移至 projectsData.js
 
-            projects.forEach(project => {
-                const card = document.createElement('div');
-                card.className = 'project-card';
-                card.style.backgroundImage = `url('${project.backgroundImage}')`;
+        // 获取URL中的项目ID
+        const projectId = parseInt(new URLSearchParams(window.location.search).get('id'));
 
-                // 创建内容容器
-                const content = document.createElement('div');
-                content.className = 'project-content';
+        // 获取项目数据
+        const project = getProjectById(projectId);
 
-                // 创建标题
-                const title = document.createElement('h3');
-                title.innerHTML = project.title.replace(/\n/g, '<br>');
+        if (project) {
+            // 更新页面标题和描述
+            document.getElementById('project-title').innerHTML = project.title.replace(/\n/g, '<br>');
+            document.getElementById('project-description').textContent = project.description;
+            document.querySelector('.work-category').textContent = `/ ${project.category}`;
+            
+            // 更新项目元数据
+            document.getElementById('project-year').textContent = project.year;
+            document.getElementById('project-role').textContent = project.role;
 
-                // 创建标签容器
-                const tags = document.createElement('div');
-                tags.className = 'card-tags';
-                project.tags.forEach((tag, index) => {
-                    const tagSpan = document.createElement('span');
-                    tagSpan.className = 'tag';
-                    tagSpan.textContent = tag;
-                    tags.appendChild(tagSpan);
-                });
-
-                // 创建链接包装器
-                const link = document.createElement('a');
-                link.href = `project-detail.html?id=${project.id}`;
-                link.className = 'card-link';
-
-                // 组装DOM
-                content.appendChild(title);
-                content.appendChild(tags);
-                link.appendChild(content);
-                card.appendChild(link);
-                projectGrid.appendChild(card);
+            // 更新标签
+            const tags = document.getElementById('project-tags');
+            tags.innerHTML = '';
+            project.tags.forEach((tag, index) => {
+                const tagSpan = document.createElement('span');
+                tagSpan.className = 'tag';
+                tagSpan.textContent = tag;
+                tags.appendChild(tagSpan);
             });
-        }
 
-        // 页面加载时初始化
-        document.addEventListener('DOMContentLoaded', createProjectCards);
+            // 更新项目特点
+            const featuresList = document.getElementById('project-features');
+            featuresList.innerHTML = '';
+            project.features.forEach(feature => {
+                const li = document.createElement('li');
+                li.textContent = feature;
+                featuresList.appendChild(li);
+            });
+
+            // 更新服务内容
+            const servicesList = document.getElementById('project-services');
+            servicesList.innerHTML = '';
+            project.services.forEach(service => {
+                const li = document.createElement('li');
+                li.textContent = service;
+                servicesList.appendChild(li);
+            });
+
+            // 图片加载功能已移至 imageLoader.js
+
+            // 开始加载图片
+            loadProjectImages();
+
+            // 可自定义显示的缩略图数量
+            const maxThumbnails = 9; // 可见缩略图数量
+            const thumbHeight = 50; // px
+            const thumbGap = 10; // px
+
+            if (project && project.detailImages && typeof project.detailImages.then === 'function') {
+              project.detailImages.then(function(images) {
+                const thumbnailsList = document.getElementById('thumbnails-list');
+                if (!thumbnailsList) return;
+                thumbnailsList.innerHTML = '';
+                if (Array.isArray(images) && images.length > 0) {
+                  images.forEach((imgObj, idx) => {
+                    const imgSrc = imgObj.url || imgObj.path || '';
+                    if (!imgSrc) return;
+                    const thumb = document.createElement('div');
+                    thumb.className = 'thumbnail-item' + (idx === 0 ? ' active' : '');
+                    thumb.innerHTML = `<img src="${imgSrc}" alt="thumb${idx}">`;
+                    thumb.addEventListener('click', () => {
+                      const anchor = document.getElementById(`img-anchor-${idx}`);
+                      if (anchor) {
+                        // 让图片顶端距离页面顶部1/3窗口高度
+                        const rect = anchor.getBoundingClientRect();
+                        const scrollTop = window.pageYOffset || document.documentElement.scrollTop;
+                        const targetY = rect.top + scrollTop - window.innerHeight / 3;
+                        window.scrollTo({ top: targetY, behavior: 'smooth' });
+                        // 切换active
+                        thumbnailsList.querySelectorAll('.thumbnail-item').forEach(t => { t.classList.remove('active'); });
+                        thumb.classList.add('active');
+                      }
+                    });
+                    thumbnailsList.appendChild(thumb);
+                  });
+                  // 初始让第一个居中
+                } else {
+                  thumbnailsList.innerHTML = '<div style="color:red;padding:10px;">无图片数据</div>';
+                }
+              });
+            }
+
+            function updateThumbsTransform(activeIdx, total, smooth) {
+              const thumbnailsList = document.getElementById('thumbnails-list');
+              const maxThumbnails = 9;
+              const thumbHeight = 50;
+              const thumbGap = 10;
+              let minIdx = 0;
+              let maxIdx = total - 1;
+              let centerIdx = Math.floor(maxThumbnails / 2);
+              let translateIdx = activeIdx - centerIdx;
+              if (activeIdx < centerIdx) translateIdx = 0;
+              if (activeIdx > maxIdx - centerIdx) translateIdx = maxIdx - maxThumbnails + 1;
+              if (translateIdx < 0) translateIdx = 0;
+              const offset = -translateIdx * (thumbHeight + thumbGap);
+              if (smooth) {
+                thumbnailsList.style.transition = 'transform 0.5s cubic-bezier(0.77,0,0.175,1)';
+              } else {
+                thumbnailsList.style.transition = 'none';
+              }
+              thumbnailsList.style.transform = `translateY(${offset}px)`;
+            }
+
+            console.log('project:', project);
+            console.log('project.gallery:', project && project.gallery);
+
+            // 更新导航
+            const currentIndex = getProjectIndex(projectId);
+            const prevProject = projects[currentIndex - 1];
+            const nextProject = projects[currentIndex + 1];
+
+            const prevContainer = document.getElementById('prev-project');
+            const nextContainer = document.getElementById('next-project');
+            const navigation = document.querySelector('.work-navigation');
+
+            if (prevProject) {
+                // 创建新的a标签，复制原有class和内容
+                const prevA = document.createElement('a');
+                prevA.className = prevContainer.className;
+                prevA.id = prevContainer.id;
+                prevA.href = `projects.html?id=${prevProject.id}`;
+                prevA.setAttribute('aria-label', '上一个项目');
+                prevA.innerHTML = prevContainer.innerHTML;
+                // 更新内容
+                prevA.querySelector('.nav-background').style.backgroundImage = `url('${prevProject.backgroundImage}')`;
+                prevA.querySelector('.nav-title').innerHTML = prevProject.title.replace(/\n/g, '<br>');
+                const prevTags = prevA.querySelector('.nav-tags');
+                prevTags.innerHTML = '';
+                const prevMetaItem = document.createElement('div');
+                prevMetaItem.className = 'work-meta-item';
+                prevProject.tags.forEach(tag => {
+                    const span = document.createElement('span');
+                    span.className = 'tag';
+                    span.textContent = tag;
+                    prevMetaItem.appendChild(span);
+                });
+                prevTags.appendChild(prevMetaItem);
+                // 替换原div
+                prevContainer.parentNode.replaceChild(prevA, prevContainer);
+            }
+
+            if (nextProject) {
+                const nextA = document.createElement('a');
+                nextA.className = nextContainer.className;
+                nextA.id = nextContainer.id;
+                nextA.href = `projects.html?id=${nextProject.id}`;
+                nextA.setAttribute('aria-label', '下一个项目');
+                nextA.innerHTML = nextContainer.innerHTML;
+                nextA.querySelector('.nav-background').style.backgroundImage = `url('${nextProject.backgroundImage}')`;
+                nextA.querySelector('.nav-title').innerHTML = nextProject.title.replace(/\n/g, '<br>');
+                const nextTags = nextA.querySelector('.nav-tags');
+                nextTags.innerHTML = '';
+                const nextMetaItem = document.createElement('div');
+                nextMetaItem.className = 'work-meta-item';
+                nextProject.tags.forEach(tag => {
+                    const span = document.createElement('span');
+                    span.className = 'tag';
+                    span.textContent = tag;
+                    nextMetaItem.appendChild(span);
+                });
+                nextTags.appendChild(nextMetaItem);
+                nextContainer.parentNode.replaceChild(nextA, nextContainer);
+            }
+
+            // 处理导航的显示/隐藏
+            if (!prevProject && nextProject) {
+                prevContainer.classList.add('hidden');
+                navigation.classList.add('single-nav');
+            } else if (!nextProject && prevProject) {
+                nextContainer.classList.add('hidden');
+                navigation.classList.add('single-nav');
+            } else if (prevProject && nextProject) {
+                navigation.classList.remove('single-nav');
+            }
+        }
+    </script>
+    <script src="js/main.js"></script>
+    <script src="https://cdnjs.cloudflare.com/ajax/libs/gsap/3.11.4/gsap.min.js"></script>
+    <script src="https://cdnjs.cloudflare.com/ajax/libs/gsap/3.6.1/ScrollTrigger.min.js"></script>
+    <script>
+        // 注册ScrollTrigger插件
+        gsap.registerPlugin(ScrollTrigger);
+
+        // 页面加载动画
+        document.addEventListener('DOMContentLoaded', () => {
+            // work-banner动画
+            gsap.from('.work-banner-image', {
+                opacity: 0,
+                duration: 1.5,
+                ease: 'power2.out'
+            });
+            
+            gsap.from('.work-banner-left h1, .work-category', {
+                y: 50,
+                opacity: 0,
+                duration: 1,
+                stagger: 0.2,
+                delay: 0.3,
+                ease: 'back.out'
+            });
+            
+            gsap.from('.work-meta-item', {
+                y: 30,
+                opacity: 0,
+                duration: 0.8,
+                stagger: 0.15,
+                delay: 0.6,
+                ease: 'power2.out'
+            });
+            
+            gsap.from('.work-meta-description', {
+                y: 30,
+                opacity: 0,
+                duration: 0.8,
+                delay: 1,
+                ease: 'power2.out'
+            });
+            
+            gsap.from('.scroll-down', {
+                y: 20,
+                opacity: 0,
+                duration: 0.8,
+                delay: 1.2,
+                ease: 'power2.out'
+            });
+
+            // work-features动画
+            gsap.from('.features-section h2, .services-section h2', {
+                scrollTrigger: {
+                    trigger: '.work-features',
+                    start: 'top 80%'
+                },
+                y: 50,
+                opacity: 0,
+                duration: 0.8,
+                ease: 'power2.out'
+            });
+            
+            gsap.from('#project-features li', {
+                scrollTrigger: {
+                    trigger: '#project-features',
+                    start: 'top 70%'
+                },
+                y: 30,
+                opacity: 0,
+                duration: 0.6,
+                stagger: 0.1,
+                ease: 'power2.out'
+            });
+            
+            gsap.from('#project-services li', {
+                scrollTrigger: {
+                    trigger: '#project-services',
+                    start: 'top 70%'
+                },
+                y: 30,
+                opacity: 0,
+                duration: 0.6,
+                stagger: 0.1,
+                ease: 'power2.out'
+            });
+        });
     </script>
 
-    <script src="js/main.js"></script>
-    <script src="scripts/gsap.min.js"></script>
+      
+    <script src="https://cdn.jsdelivr.net/npm/@barba/core"></script>
+    <!-- ⭐⭐ 页面切换红色遮挡动画由js/pageTransitions.js实现，勿删！⭐⭐ -->
+    <script src="js/pageTransitions.js"></script>
+    <script src="js/overlayEnter.js"></script>
+    <script>
+    // 缩略图框显示逻辑（带渐入渐出）
+    function updateSidebarThumbnailsVisibility() {
+      const sidebar = document.querySelector('.sidebar-thumbnails');
+      const features = document.querySelector('.work-features');
+      const navigation = document.querySelector('.work-navigation');
+      if (!sidebar || !features || !navigation) return;
+      const featuresRect = features.getBoundingClientRect();
+      const navRect = navigation.getBoundingClientRect();
+      const featuresAtOrPastTop = featuresRect.top <= 0;
+      const navNotQuarterVisible = navRect.top > window.innerHeight - navRect.height * 0.25;
+      if (featuresAtOrPastTop && navNotQuarterVisible) {
+        sidebar.classList.add('show');
+        sidebar.classList.remove('hide');
+      } else {
+        sidebar.classList.add('hide');
+        sidebar.classList.remove('show');
+      }
+    }
+    window.addEventListener('scroll', updateSidebarThumbnailsVisibility, {passive:true});
+    window.addEventListener('resize', updateSidebarThumbnailsVisibility);
+    document.addEventListener('DOMContentLoaded', () => {
+      setTimeout(updateSidebarThumbnailsVisibility, 100);
+    });
+    </script>
+    <script>
+    let scrollHighlightTimeout = null;
+    function autoHighlightThumbnailOnScroll() {
+      const images = Array.from(document.querySelectorAll('.work-image'));
+      if (!images.length) return;
+      const centerY = window.innerHeight / 2;
+      let minDist = Infinity;
+      let activeIdx = 0;
+      images.forEach((imgDiv, idx) => {
+        const rect = imgDiv.getBoundingClientRect();
+        const imgCenter = rect.top + rect.height / 2;
+        const dist = Math.abs(imgCenter - centerY);
+        if (dist < minDist) {
+          minDist = dist;
+          activeIdx = idx;
+        }
+      });
+      const thumbnailsList = document.getElementById('thumbnails-list');
+      if (!thumbnailsList) return;
+      const thumbs = thumbnailsList.querySelectorAll('.thumbnail-item');
+      thumbs.forEach(t => t.classList.remove('active'));
+      if (thumbs[activeIdx]) thumbs[activeIdx].classList.add('active');
+      if (typeof updateThumbsTransform === 'function') {
+        updateThumbsTransform(activeIdx, thumbs.length, true);
+      }
+    }
+    window.addEventListener('scroll', () => {
+      autoHighlightThumbnailOnScroll();
+    });
+    </script>
+    <!-- 监听缩略图框滚动，滚动停止后高亮final-active -->
+    <script>
+    let thumbScrollTimeout = null;
+    let lastThumbScrollTop = null;
+    const thumbnailsSidebar = document.querySelector('.sidebar-thumbnails');
+    if (thumbnailsSidebar) {
+      thumbnailsSidebar.addEventListener('scroll', () => {
+        const thumbnailsList = document.getElementById('thumbnails-list');
+        if (!thumbnailsList) return;
+        if (lastThumbScrollTop === thumbnailsSidebar.scrollTop) return;
+        lastThumbScrollTop = thumbnailsSidebar.scrollTop;
+        const thumbs = thumbnailsList.querySelectorAll('.thumbnail-item');
+        thumbs.forEach(t => t.classList.remove('final-active'));
+        if (thumbScrollTimeout) clearTimeout(thumbScrollTimeout);
+        thumbScrollTimeout = setTimeout(() => {
+          const activeThumb = thumbnailsList.querySelector('.thumbnail-item.active');
+          if (activeThumb) activeThumb.classList.add('final-active');
+        }, 100);
+      });
+    }
+    </script>
 </body>
 </html>
+

@@ -2,7 +2,7 @@ const fs = require('fs');
 const path = require('path');
 
 // 配置
-const IMG_DIR = path.join(__dirname, '../img');
+const IMG_DIR = path.join(__dirname, '../images');
 const OUTPUT_FILE = path.join(__dirname, '../js/imglist.js');
 
 // 获取所有项目图片

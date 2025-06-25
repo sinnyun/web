@@ -40,8 +40,8 @@ function loadBannerImage(projectId, project) {
     if (!bannerImage) return;
     
     // 尝试加载0.jpg作为背景图，如果不存在则尝试1_1.jpg，最后使用默认背景图
-    const bannerImagePath = `./img/project${projectId}/0.jpg`;
-    const fallbackImagePath = `./img/project${projectId}/1_1.jpg`;
+    const bannerImagePath = `./images/project${projectId}/0.jpg`;
+    const fallbackImagePath = `./images/project${projectId}/1_1.jpg`;
     
     // 添加图片加载检查，确保图片存在
     const testImg = new Image();
@@ -96,6 +96,7 @@ async function loadDetailImages(project) {
 
         const imageDiv = document.createElement('div');
         imageDiv.className = `work-image layout-${currentLayout}`;
+        imageDiv.id = `img-anchor-${index}`; // 添加唯一id
         
         // 不再需要添加延迟类，GSAP的stagger功能会处理动画延迟
         

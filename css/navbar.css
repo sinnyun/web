@@ -10,7 +10,8 @@
     align-items: center;
     padding: 0 40px;
     background: transparent;
-    z-index: 1000;
+    z-index: 1002;
+    /* mix-blend-mode: difference; 移除混合模式 */
 }
 
 .logo {
@@ -88,7 +89,8 @@
     top: 50%;
     margin-top: -30px;
     transform: all 0.3s ease;
-    
+    z-index: 1001;
+    /* mix-blend-mode: difference; 移除混合模式 */
 }
 
 .menu-button:hover {

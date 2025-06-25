@@ -6,9 +6,9 @@ const defaultConfig = {
     author: 'sinnyun',
     email: 'l616631804@gmail.com',
     language: 'zh-CN',
-    themeColor: '#000000', // TODO: 需要更新为个人品牌色
-    favicon: '/img/favicon.ico',
-    ogImage: '/img/og-image.jpg', // TODO: 需要更新为个人品牌图片
+    themeColor: '#3498db', // 更新为更通用的蓝色，可根据实际品牌色调整
+    favicon: '/images/favicon.ico',
+    ogImage: '/images/og-image.jpg', // 默认的Open Graph图片
     baseUrl: 'https://sinnyun.github.io/web', // 更新为实际部署的URL
     twitterUsername: '@sinnyun', // 添加Twitter用户名
     siteName: 'sinnyun 个人作品集' // 添加网站名称
@@ -149,7 +149,7 @@ function addStructuredData(page, config) {
         "name": "sinnyun",
         "email": "l616631804@gmail.com",
         "url": config.baseUrl,
-        "image": config.baseUrl + "/img/avatar.jpg",
+        "image": config.baseUrl + "/images/avatar.jpg",
         "description": defaultConfig.description,
         "sameAs": [
             "https://www.behance.net/sinnyun", // 添加实际的社交媒体链接
@@ -186,6 +186,19 @@ function addStructuredData(page, config) {
                 "@type": "Person",
                 "name": "sinnyun",
                 "url": config.baseUrl
+            }
+        };
+    } else if (page === 'home') {
+        // 为首页添加WebSite结构化数据
+        structuredData = {
+            "@context": "https://schema.org",
+            "@type": "WebSite",
+            "name": config.siteName || defaultConfig.siteName,
+            "url": config.baseUrl,
+            "potentialAction": {
+                "@type": "SearchAction",
+                "target": config.baseUrl + "/search?q={search_term_string}",
+                "query-input": "required name=search_term_string"
             }
         };
     }

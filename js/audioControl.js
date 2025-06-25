@@ -1,5 +1,5 @@
 // 创建音频实例
-const bgAudio = new Audio('img/audio.mp3');
+const bgAudio = new Audio('images/audio.mp3');
 bgAudio.loop = true; // 循环播放
 
 // 获取或设置音频播放状态
@@ -63,3 +63,5 @@ function initAudioControl() {
 
 // 当DOM加载完成后初始化
 document.addEventListener('DOMContentLoaded', initAudioControl);
+
+window.initAudioControl = initAudioControl;
