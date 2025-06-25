@@ -59,7 +59,19 @@ sinnyun_web/
 - Barba.js Core
 - Font Awesome 5.15.4
 
+<<<<<<< HEAD
 ## 页面说明
+=======
+### 2025-06-19
+1. **滚动动画优化** (js/scrollEffects.js)
+   - 改进点：
+     - 提取动画参数为配置常量
+     - 添加GSAP可用性检查
+     - 优化批处理性能
+     - 增强错误处理
+   - 影响：提高动画稳定性和可维护性
+
+>>>>>>> 459dc910547e0cc714b4d6501cf1860de9aebeab
 
 ### 首页 (index.html)
 - 全屏展示设计
@@ -73,6 +85,7 @@ sinnyun_web/
 - 平滑的过滤动画效果
 - 响应式网格布局
 
+<<<<<<< HEAD
 ### 项目详情页 (projects.html)
 - 详细的项目信息展示
 - 图片预览功能
@@ -186,3 +199,45 @@ python -m http.server 8000
 ## 许可证
 
 MIT License
+=======
+已更新global.css文件，为滚动条添加了`cursor: auto !important`样式，确保：
+1. 滚动条不再受全局鼠标效果影响
+2. 保持原有的滚动条视觉样式
+3. 鼠标滑过滚动条时显示默认指针样式
+4. 不影响其他元素的鼠标交互效果
+
+
+
+ // ===== 3. 高级滚动视差效果 =====
+    // 为每个图片容器创建单独的视差效果
+    imageContainers.forEach((container, index) => {
+        // 为奇偶图片设置不同的视差方向，创造更有趣的效果
+        const direction = index % 2 === 0 ? -1 : 1;
+        const parallaxAmount = container.offsetHeight * 0.25 * direction;
+        
+        
+
+
+
+
+
+        // 创建ScrollTrigger实例，控制视差动画
+        gsap.fromTo(container, 
+            { y: 120 }, // 起始状态
+            {
+                y: parallaxAmount, // 目标位置
+                ease: "none", // 线性动画，跟随滚动
+                scrollTrigger: {
+                    trigger: container, // 触发元素
+                    start: "top bottom", // 当元素顶部到达视口底部时开始
+                    end: "bottom top",   // 当元素底部到达视口顶部时结束
+                    scrub: 1.5,          // 平滑跟随滚动位置，值越大越平滑
+                    // markers: false,    // 调试标记
+                    toggleActions: "play none none reverse" // 控制动画播放行为
+                }
+            }
+        );
+        
+        
+    });
+>>>>>>> 459dc910547e0cc714b4d6501cf1860de9aebeab

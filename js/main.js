@@ -1,3 +1,342 @@
+<<<<<<< HEAD
+=======
+// 幻灯片类
+class Slideshow {
+    constructor(container, options = {}) {
+        this.container = container;
+        this.options = {
+            projects: [],
+            autoplayDelay: 5000,
+            ...options
+        };
+        
+        this.currentSlide = 0;
+        this.slides = [];
+        this.thumbnails = [];
+        this.isAnimating = false;
+        this.autoplayInterval = null;
+        
+        this.init();
+    }
+    
+    init() {
+        this.createSlides();
+        this.setupNavigation();
+        this.startAutoplay();
+        
+        // 初始化滚轮事件
+        this.wheelCount = 0;
+        this.wheelTimeout = null;
+        this.setupWheelNavigation();
+    }
+    
+    setupWheelNavigation() {
+        window.addEventListener('wheel', (e) => {
+            if (!document.body.classList.contains('homepage')) return;
+            
+            this.wheelCount += Math.abs(e.deltaY);
+            
+            clearTimeout(this.wheelTimeout);
+            this.wheelTimeout = setTimeout(() => {
+                this.wheelCount = 0;
+            }, 200);
+            
+            if (this.wheelCount >= 500) {
+                this.wheelCount = 0;
+                if (e.deltaY > 0) {
+                    this.nextSlide();
+                } else {
+                    this.prevSlide();
+                }
+            }
+        });
+    }
+    
+    setupNavigation() {
+        // 创建导航按钮
+        const prevButton = document.createElement('button');
+        prevButton.className = 'slide-arrow prev';
+        prevButton.innerHTML = '<i class="fas fa-chevron-left"></i>';
+        
+        const nextButton = document.createElement('button');
+        nextButton.className = 'slide-arrow next';
+        nextButton.innerHTML = '<i class="fas fa-chevron-right"></i>';
+        
+        this.container.appendChild(prevButton);
+        this.container.appendChild(nextButton);
+        
+        // 初始化按钮动画
+        this.initArrowAnimation();
+        
+        // 添加点击事件
+        prevButton.addEventListener('click', () => {
+            this.prevSlide();
+            this.resetArrowAnimation();
+        });
+        
+        nextButton.addEventListener('click', () => {
+            this.nextSlide();
+            this.resetArrowAnimation();
+        });
+        
+        // 添加鼠标进入离开事件
+        [prevButton, nextButton].forEach(button => {
+            button.addEventListener('mouseenter', () => {
+                button.classList.remove('animate');
+                this.stopAutoplay();
+                handleMouseEnter();
+            });
+            
+            button.addEventListener('mouseleave', () => {
+                button.classList.add('animate');
+                this.startAutoplay();
+                handleMouseLeave();
+            });
+        });
+    }
+    
+    initArrowAnimation() {
+        const arrows = document.querySelectorAll('.slide-arrow');
+        arrows.forEach(arrow => {
+            // 重置动画
+            arrow.style.animation = 'none';
+            arrow.offsetHeight; // 强制重排
+            arrow.style.animation = '';
+            // 添加动画类
+            arrow.classList.add('animate');
+        });
+    }
+    
+    resetArrowAnimation() {
+        const arrows = document.querySelectorAll('.slide-arrow');
+        arrows.forEach(arrow => {
+            arrow.classList.remove('animate');
+            // 强制重排
+            arrow.offsetHeight;
+            arrow.classList.add('animate');
+        });
+    }
+    
+    startAutoplay() {
+        if (this.autoplayInterval) return;
+        
+        this.autoplayInterval = setInterval(() => {
+            this.nextSlide();
+        }, this.options.autoplayDelay);
+    }
+    
+    stopAutoplay() {
+        if (this.autoplayInterval) {
+            clearInterval(this.autoplayInterval);
+            this.autoplayInterval = null;
+        }
+    }
+    
+    resetAutoplay() {
+        this.stopAutoplay();
+        this.startAutoplay();
+    }
+    
+    nextSlide() {
+        if (this.isAnimating) return;
+        const nextIndex = (this.currentSlide + 1) % this.slides.length;
+        this.goToSlide(nextIndex, 1);
+    }
+    
+    prevSlide() {
+        if (this.isAnimating) return;
+        const prevIndex = (this.currentSlide - 1 + this.slides.length) % this.slides.length;
+        this.goToSlide(prevIndex, -1);
+    }
+    
+    goToSlide(index, direction = 1, immediate = false) {
+        if (this.isAnimating || index === this.currentSlide) return;
+        this.isAnimating = true;
+        
+        const slidesContainer = document.getElementById('slides-container');
+        const offset = -index * 16.666666667;
+        
+        if (immediate) {
+            gsap.set(slidesContainer, {
+                x: `${offset}%`,
+                immediateRender: true
+            });
+            this.initSlideAnimation(index);
+        } else {
+            // 先重置当前幻灯片的动画
+            if (this.slides[this.currentSlide]) {
+                const currentBackground = this.slides[this.currentSlide].querySelector('.slide-background');
+                if (currentBackground) {
+                    gsap.set(currentBackground, { clearProps: "animation" });
+                }
+            }
+            
+            gsap.to(slidesContainer, {
+                x: `${offset}%`,
+                duration: 0.8,
+                ease: "power2.inOut",
+                onComplete: () => {
+                    this.initSlideAnimation(index);
+                    this.resetArrowAnimation();
+                }
+            });
+        }
+        
+        // 更新缩略图状态
+        this.thumbnails[this.currentSlide].classList.remove('active');
+        this.thumbnails[index].classList.add('active');
+        
+        // 更新当前幻灯片索引
+        this.currentSlide = index;
+        
+        // 动画结束后清理状态
+        gsap.delayedCall(0.8, () => {
+            this.isAnimating = false;
+        });
+    }
+    
+    initSlideAnimation(index) {
+        // 移除所有幻灯片的active类和动画
+        this.slides.forEach(slide => {
+            slide.classList.remove('active');
+            const background = slide.querySelector('.slide-background');
+            const content = slide.querySelector('.slide-content');
+            
+            if (background) {
+                // 重置背景动画
+                background.style.animation = 'none';
+                background.offsetHeight; // 强制重排
+                background.style.animation = '';
+            }
+            
+            if (content) {
+                content.classList.remove('animate-in');
+            }
+        });
+        
+        // 为当前幻灯片添加动画类
+        const currentSlide = this.slides[index];
+        if (currentSlide) {
+            // 延迟添加active类以确保动画重置
+            setTimeout(() => {
+                currentSlide.classList.add('active');
+                const content = currentSlide.querySelector('.slide-content');
+                if (content) {
+                    content.classList.add('animate-in');
+                }
+            }, 50);
+        }
+    }
+    
+    createSlides() {
+        const slidesContainer = document.getElementById('slides-container');
+        const thumbnailsWrapper = document.getElementById('thumbnails-wrapper');
+        
+        if (!slidesContainer || !thumbnailsWrapper) {
+            console.error('Containers not found');
+            return;
+        }
+        
+        slidesContainer.innerHTML = '';
+        thumbnailsWrapper.innerHTML = '';
+        
+        this.options.projects.forEach((projectId, index) => {
+            const project = projects.find(p => p.id === projectId);
+            if (!project) {
+                console.error(`Project with id ${projectId} not found`);
+                return;
+            }
+            
+            // 创建幻灯片主容器
+            const slide = document.createElement('li');
+            slide.className = 'slide';
+            slide.dataset.index = index;
+            slide.dataset.projectId = projectId;
+            
+            // 创建背景容器
+            const slideBackground = document.createElement('div');
+            slideBackground.className = 'slide-background';
+            slideBackground.style.backgroundImage = `url('${project.backgroundImage}')`;
+            slide.appendChild(slideBackground);
+            
+            // 创建内容容器
+            const slideContent = document.createElement('div');
+            slideContent.className = 'slide-content';
+            
+            // 创建标签容器
+            const tagsContainer = document.createElement('div');
+            tagsContainer.className = 'slide-tags';
+            project.tags.slice(0, 3).forEach(tag => {
+                const tagSpan = document.createElement('span');
+                tagSpan.className = 'tag';
+                tagSpan.textContent = tag;
+                tagsContainer.appendChild(tagSpan);
+            });
+            
+            // 创建标题容器
+            const titleContainer = document.createElement('h2');
+            titleContainer.className = 'slide-title';
+            
+            // 创建标题链接
+            const titleLink = document.createElement('a');
+            titleLink.className = 'title-link';
+            titleLink.innerHTML = project.title.replace(/\n/g, '<br>');
+            
+            const currentProjectId = projectId;
+            titleLink.addEventListener('click', (e) => {
+                e.preventDefault();
+                window.location.href = `project-detail.html?id=${currentProjectId}`;
+            });
+            
+            titleLink.addEventListener('mouseenter', () => {
+                this.stopAutoplay();
+                handleMouseEnter();
+            });
+            
+            titleLink.addEventListener('mouseleave', () => {
+                this.startAutoplay();
+                handleMouseLeave();
+            });
+            
+            titleContainer.appendChild(titleLink);
+            
+            // 创建项目描述
+            const summary = document.createElement('div');
+            summary.className = 'slide-summary';
+            summary.textContent = project.summary;
+            
+            // 组装幻灯片内容
+            slideContent.appendChild(tagsContainer);
+            slideContent.appendChild(titleContainer);
+            slideContent.appendChild(summary);
+            slide.appendChild(slideContent);
+            
+            slidesContainer.appendChild(slide);
+            this.slides.push(slide);
+            
+            // 创建缩略图
+            const thumbnail = document.createElement('div');
+            thumbnail.className = 'thumbnail';
+            thumbnail.dataset.index = index;
+            thumbnail.dataset.projectId = projectId;
+            thumbnail.style.backgroundImage = `url('${project.backgroundImage}')`;
+            
+            thumbnail.addEventListener('click', () => {
+                this.goToSlide(index);
+            });
+            
+            thumbnailsWrapper.appendChild(thumbnail);
+            this.thumbnails.push(thumbnail);
+        });
+        
+        // 初始化第一个幻灯片
+        this.initSlideAnimation(0);
+        this.thumbnails[0].classList.add('active');
+        this.goToSlide(0, 1, true);
+    }
+}
+
+>>>>>>> 459dc910547e0cc714b4d6501cf1860de9aebeab
 // 加载菜单面板
 async function loadMenuPanel() {
     try {
