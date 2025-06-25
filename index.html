@@ -1,0 +1,307 @@
+<!DOCTYPE html>
+<html lang="zh-CN">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>sinnyun - 个人小站</title>
+    
+    <!-- 网站图标 -->
+    <link rel="icon" type="image/x-icon" href="images/favicon.ico">
+    <link rel="shortcut icon" type="image/x-icon" href="images/favicon.ico">
+    <link rel="apple-touch-icon" href="images/favicon.ico">
+    
+    <!-- 样式文件 -->
+    <link rel="stylesheet" href="css/global.css">
+    <link rel="stylesheet" href="css/navbar.css">
+      <link rel="stylesheet" href="css/main.css">
+    <link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/6.4.2/css/all.min.css">
+    
+    <!-- SEO配置 -->
+    <script src="js/seoConfig.js"></script>
+    <script>
+        document.addEventListener('DOMContentLoaded', function() {
+            applySEO('home');
+        });
+    </script>
+    
+    <!-- 其他脚本 -->
+    <script src="js/audioControl.js"></script>
+    <style>
+    #overlay-enter {
+      position: fixed;
+      left: 0; top: 0; width: 100vw; height: 100vh;
+      background: red;
+      z-index: 9999;
+      pointer-events: none;
+      transform: translateY(0);
+      transition: none;
+      display: block;
+    }
+    </style>
+    
+   
+    
+
+
+
+
+
+
+  </head>
+
+<body>
+    <!-- 自定义鼠标 -->
+    <div class="cursor-dot"></div>
+    <div class="cursor-circle"></div>
+
+<div data-barba="wrapper">
+
+ <div data-barba="container" data-barba-namespace="home">
+
+    <nav class="navbar">
+        <div class="logo">
+            <a href="index.html">
+                <img src="images/logo_h.svg" alt="PORTFOLIO" class="logo-image">
+            </a>
+        </div>
+        <div class="nav-right">
+            <!-- <a href="project_category.html" class="projects-link">work</a> -->
+               <a href="project_category.html" class="projects-link">work</a>
+            <button class="menu-button" onclick="toggleMenu()" title="打开菜单" aria-label="打开菜单">
+                <span class="menu-line"></span>
+                <span class="menu-line"></span>
+                <span class="menu-line"></span>
+            </button>
+        </div>
+    </nav>
+     
+
+    <!-- </header> -->
+     <div class="loaderWrap">
+      <div class="loaderInner">
+        <div class="lCol is-edge">
+          <div class="colInner">
+            <div class="lImgbox">
+              <img src="./images/home_01.jpg" />
+            </div>
+            <div class="lImgbox">
+              <img src="./images/home_02.jpg" />
+            </div>
+            <div class="lImgbox">
+              <img src="./images/home_03.jpg" />
+            </div>
+            <div class="lImgbox">
+              <img src="./images/home_04.jpg" />
+            </div>
+            <div class="lImgbox">
+              <img src="./images/home_05.jpg" />
+            </div>
+          </div>
+        </div>
+        <div class="lCol is-revers">
+          <div class="colInner">
+            <div class="lImgbox">
+              <img src="./images/home_06.jpg" />
+            </div>
+            <div class="lImgbox">
+              <img src="./images/home_07.jpg" />
+            </div>
+            <div class="lImgbox">
+              <img src="./images/home_01.jpg" />
+            </div>
+            <div class="lImgbox">
+              <img src="./images/home_02.jpg" />
+            </div>
+            <div class="lImgbox">
+              <img src="./images/home_03.jpg" />
+            </div>
+          </div>
+        </div>
+        <div class="lCol is-center">
+          <div class="colInner">
+            <div class="lImgbox">
+              <img src="./images/home_04.jpg" />
+            </div>
+            <div class="lImgbox">
+              <img src="./images/home_05.jpg" />
+            </div>
+            <div class="lImgbox isMainImg">
+              <img src="./images/home_00.jpg" />
+            </div>
+            <div class="lImgbox">
+              <img src="./images/home_06.jpg" />
+            </div>
+            <div class="lImgbox">
+              <img src="./images/home_07.jpg" />
+            </div>
+          </div>
+        </div>
+        <div class="lCol is-revers">
+          <div class="colInner">
+            <div class="lImgbox">
+              <img src="./images/home_01.jpg" />
+            </div>
+            <div class="lImgbox">
+              <img src="./images/home_02.jpg" />
+            </div>
+            <div class="lImgbox">
+              <img src="./images/home_03.jpg" />
+            </div>
+            <div class="lImgbox">
+              <img src="./images/home_04.jpg" />
+            </div>
+            <div class="lImgbox">
+              <img src="./images/home_05.jpg" />
+            </div>
+          </div>
+        </div>
+        <div class="lCol is-edge">
+          <div class="colInner">
+            <div class="lImgbox">
+              <img src="./images/home_06.jpg" />
+            </div>
+            <div class="lImgbox">
+              <img src="./images/home_07.jpg" />
+            </div>
+            <div class="lImgbox">
+              <img src="./images/home_01.jpg" />
+            </div>
+            <div class="lImgbox">
+              <img src="./images/home_02.jpg" />
+            </div>
+            <div class="lImgbox">
+              <img src="./images/home_03.jpg" />
+            </div>
+          </div>
+        </div>
+      </div>
+    </div>
+ 
+    <div class="mainBox">
+      <main>
+        <section>
+          <div class="mainImageWrap">
+            <div class="imgBox" id="img0">
+              <img src="./images/home_00.jpg" />
+            </div>
+            <div class="imgBox" id="img1">
+              <img src="./images/home_01.jpg" />
+            </div>
+            <div class="imgBox" id="img2">
+              <img src="./images/home_02.jpg" />
+            </div>
+            <div class="imgBox" id="img3">
+              <img src="./images/home_03.jpg" />
+            </div>
+            <div class="imgBox" id="img4">
+              <img src="./images/home_04.jpg" />
+            </div>
+            <!-- <div class="imgBox" id="img5">
+              <img src="./images/home_05.jpg" />
+            </div>
+            <div class="imgBox" id="img6">
+              <img src="./images/home_06.jpg" />
+            </div>
+            <div class="imgBox" id="img7">
+              <img src="./images/home_07.jpg" />
+            </div> -->
+          </div>
+
+          <div class="sliderTextWrap">
+            <div class="inner">
+              <div class="arrow" data-nav="left">
+                <svg viewBox="0 0 22 22">
+                  <polygon
+                    fill="currentcolor"
+                    points="22 11.751 0 11.751 0 10.249 22 10.249 22 11"
+                  ></polygon>
+                  <polygon
+                    fill="currentcolor"
+                    points="11.751 0 11.751 22 10.249 22 10.249 0 11 0"
+                  ></polygon>
+                </svg>
+              </div>
+              <div class="textBox">
+                <div class="h-title"><a href="projects.html?id=1"> 探索  面向未来的  设计 </a></div>
+                <div class="h-title"><a href="projects.html?id=2"> 搭建  三维空间的  世界 </a></div>
+                <div class="h-title"><a href="projects.html?id=3"> 尝试  诗意表达的  演化 </a></div>
+                <div class="h-title"><a href="projects.html?id=4"> 创造  数字界面的  迭代 </a></div>
+                <div class="h-title"><a href="projects.html?id=5"> 重构  个人历程的  维度 </a></div>
+                <!-- <div class="h-title"><a href="projects.html?id=6"> 碰撞 多维领域的 创想 </a></div>
+                <div class="h-title"><a href="projects.html?id=7"> 迭代 理论转化的 流动 </a></div>
+                <div class="h-title"><a href="projects.html?id=8"> 绽放 思维理想的 状态 </a></div> -->
+              </div>
+              <div class="arrow" data-nav="right">
+                <svg viewBox="0 0 22 22">
+                  <polygon
+                    fill="currentcolor"
+                    points="22 11.751 0 11.751 0 10.249 22 10.249 22 11"
+                  ></polygon>
+                  <polygon
+                    fill="currentcolor"
+                    points="11.751 0 11.751 22 10.249 22 10.249 0 11 0"
+                  ></polygon>
+                </svg>
+              </div>
+            </div>
+          </div>
+          <div class="paginationWrap">
+            <div class="cuItem">
+              <div class="inner">
+                <i>1</i>
+                <i>2</i>
+                <i>3</i>
+                <i>4</i>
+                <i>5</i>
+                <!-- <i>6</i>
+                <i>7</i>
+                <i>8</i> -->
+              </div>
+            </div>
+            <span>5</span>
+          </div>
+          <div class="bottomNav">
+            <div class="smallthumb">
+              <div class="sItem">
+                <img src="./images/home_00.jpg" />
+              </div>
+              <div class="sItem">
+                <img src="./images/home_01.jpg" />
+              </div>
+              <div class="sItem">
+                <img src="./images/home_02.jpg" />
+              </div>
+              <div class="sItem">
+                <img src="./images/home_03.jpg" />
+              </div>
+              <div class="sItem">
+                <img src="./images/home_04.jpg" />
+              </div>
+              <!-- <div class="sItem">
+                <img src="./images/home_05.jpg" />
+              </div> -->
+              <!-- <div class="sItem">
+                <img src="./images/home_06.jpg" />
+              </div>
+              <div class="sItem">
+                <img src="./images/home_07.jpg" />
+              </div> -->
+            </div>
+          </div>
+        </section>
+      </main>
+    </div>
+
+
+
+    </div></div>
+
+ <script src="js/main.js"></script>
+    <script src="https://cdnjs.cloudflare.com/ajax/libs/gsap/3.11.4/gsap.min.js"></script>
+       <script src="https://cdn.jsdelivr.net/npm/@barba/core"></script>
+        <!-- ⭐⭐ 页面切换红色遮挡动画由js/pageTransitions.js实现，勿删！⭐⭐ -->
+    <script src="js/pageTransitions.js"></script>
+    <script src="js/work.js"></script>
+    <script src="js/overlayEnter.js"></script>
+  </body>
+</html>

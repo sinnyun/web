@@ -1,0 +1,26 @@
+{
+    "name": "camillemormal Test",
+    "version": "1.0.0",
+    "description": "Re-build camillemormal project",
+    "main": "index.html",
+    "scripts": {
+        "start": "echo \"使用浏览器直接打开index.html文件即可预览\"",
+        "build": "echo \"已移除构建工具，直接使用源文件\""
+    },
+    "dependencies": {
+        "@barba/core": "^2.9.7",
+        "gsap": "3.11.5",
+        "sass": "1.59.3"
+    },
+    "devDependencies": {
+        "@babel/core": "7.2.0",
+        "typescript": "4.4.4"
+    },
+    "resolutions": {
+        "@babel/preset-env": "7.13.8"
+    },
+    "keywords": [
+        "javascript",
+        "starter"
+    ]
+}

@@ -1,0 +1,629 @@
+
+.smallthumb .sItem {
+    filter: grayscale(100%);
+    opacity: 0.5;
+}
+.smallthumb .sItem :active{
+    filter: grayscale(50%);
+    opacity: 1;
+}
+
+.wrapper {
+    width: 100%;
+    height: 100%;
+}
+.container {
+width: 100%;
+height: 100%;
+}
+
+
+
+/* 全局鼠标样式 */
+* {
+    cursor: none !important;
+}
+
+/* 自定义鼠标样式 */
+.cursor-dot {
+    width: 8px;
+    height: 8px;
+    background-color: #ff0000;
+    border-radius: 50%;
+    position: fixed;
+    pointer-events: none;
+    z-index: 9999;
+    left: -4px; /* 半径的负值，用于居中 */
+    top: -4px;  /* 半径的负值，用于居中 */
+    mix-blend-mode: difference;
+    will-change: transform;
+    transition: width 0.2s ease, height 0.2s ease, background-color 0.2s ease;
+}
+
+.cursor-circle {
+    width: 24px;
+    height: 24px;
+    border: 2px solid #ffffff;
+    border-radius: 50%;
+    position: fixed;
+    pointer-events: none;
+    z-index: 9998;
+    left: -12px; /* 半径的负值，用于居中 */
+    top: -12px;  /* 半径的负值，用于居中 */
+    transition: all 0.3s cubic-bezier(0.16, 1, 0.3, 1);
+    mix-blend-mode: difference;
+    will-change: transform;
+}
+
+/* 链接悬停效果 */
+a, 
+.thumbnail,
+button,
+.arrow,
+.menu-button,
+.slide-arrow,
+.lightbox,
+.thumbnails-container,
+.close-button,
+[role="button"],
+input[type="button"],
+input[type="submit"],
+input[type="reset"] {
+    position: relative;
+    color: #ffffff;
+    cursor: none !important;
+}
+
+/* 鼠标圆圈放大效果 */
+body.link-hovered .cursor-circle {
+    width: 72px;
+    height: 72px;
+    background: rgba(255, 255, 255, 1);
+    border: none;
+    mix-blend-mode: difference;
+    left: -36px; /* 更新为新半径的负值 */
+    top: -36px;  /* 更新为新半径的负值 */
+    transition: all 0.4s cubic-bezier(0.16, 1, 0.3, 1);
+}
+
+/* 添加鼠标悬停时的过渡状态 */
+.cursor-circle.hover {
+    transform: scale(1.05);
+    transition: all 0.2s cubic-bezier(0.16, 1, 0.3, 1);
+}
+
+.cursor-dot.hover {
+    transform: scale(0.8);
+    opacity: 0.8;
+    transition: all 0.2s cubic-bezier(0.16, 1, 0.3, 1);
+}
+
+/* 通用动画 */
+.fade-in {
+    opacity: 0;
+    transform: translateY(20px);
+    transition: opacity 0.5s ease, transform 0.5s ease;
+}
+
+.fade-in.active {
+    opacity: 1;
+    transform: translateY(0);
+}
+
+/* 通用按钮样式 */
+.button {
+    display: inline-block;
+    padding: 12px 30px;
+    border: 2px solid white;
+    color: white;
+    text-decoration: none;
+    font-size: 1.1rem;
+    letter-spacing: 1px;
+    transition: all 0.3s ease;
+}
+
+.button:hover {
+    background: white;
+    color: black;
+}
+
+/* 通用标题样式 */
+.section-title {
+    font-size: 2.5rem;
+    font-weight: 300;
+    margin-bottom: 30px;
+    letter-spacing: 2px;
+    text-align: center;
+}
+
+/* 通用容器样式 */
+.container {
+    max-width: 1400px;
+    margin: 0 auto;
+    padding: 0 40px;
+}
+
+@media (max-width: 768px) {
+    .container {
+        padding: 0 20px;
+    }
+
+    .section-title {
+        font-size: 2rem;
+    }
+
+    .button {
+        padding: 10px 25px;
+        font-size: 1rem;
+    }
+}
+
+/* 菜单样式 */
+.menu-panel {
+    position: fixed;
+    top: 0;
+    right: -100%;
+    width: 100%;
+    height: 100%;
+    background: rgba(0, 0, 0, 0.85);
+    -webkit-backdrop-filter: blur(8px);
+    backdrop-filter: blur(8px);
+    transition: right 0.5s ease;
+    z-index: 1000;
+
+}
+
+.menu-panel.active {
+    right: 0;
+}
+
+.menu-content {
+    display: grid;
+    grid-template-columns: 45% 55%;
+
+    padding: 80px 5vw;
+
+}
+
+.menu-left {
+    display: flex;
+    align-items: center;
+    justify-content: center;
+    padding: 15rem;
+    position: relative;
+
+}
+
+.profile-image {
+    width: 100%;
+
+    overflow: hidden;
+    position: relative;
+}
+
+.profile-image img {
+    width: 100%;
+    height: 100%;
+    object-fit: cover;
+    transition: transform 0.5s ease;
+}
+
+.menu-right {
+    padding: 8rem 2rem 2rem 2rem;
+    margin-right: 30rem;
+    display: flex;
+    flex-direction: column;
+    justify-content: flex-start;
+    gap: 2rem;
+    height: 100vh;
+
+}
+
+.menu-section {
+    opacity: 0;
+    transform: translateY(20px);
+    transition: all 0.5s ease;
+}
+
+.menu-panel.active .menu-section {
+    opacity: 1;
+    transform: translateY(0);
+}
+
+.menu-section:nth-child(1) { transition-delay: 0.1s; }
+.menu-section:nth-child(2) { transition-delay: 0.2s; }
+
+.menu-section h2 {
+    color: #fff;
+    font-size: 1.8rem;
+    font-weight: 300;
+    margin-bottom: 2rem;
+    letter-spacing: 2px;
+}
+
+.about-text {
+    margin-bottom: 4rem;
+}
+
+.about-text p {
+    color: rgba(255, 255, 255, 0.507);
+    font-size: 1rem;
+    line-height: 1.8;
+    margin-bottom: 1rem;
+    font-weight: 300;
+    letter-spacing: 0.5px;
+}
+
+.skills-section {
+    margin-top: 2rem;
+}
+
+.skills-section h2 {
+    color: #fff;
+    font-size: 1.4rem;
+    font-weight: 300;
+    margin-bottom: 2rem;
+    letter-spacing: 2px;
+}
+
+.skills-grid {
+    display: grid;
+    grid-template-columns: repeat(4, 1fr);
+    gap: 2rem;
+    margin-top: 1rem;
+}
+
+.skill-item {
+    /* padding: 1rem 0; */
+    transition: all 0.3s ease;
+}
+
+.skill-item:hover {
+    transform: translateY(-5px);
+}
+
+.skill-item h3 {
+    color: #ffffffc0;
+    font-size: 1rem;
+    font-weight: 400;
+    margin-bottom: 1rem;
+    letter-spacing: 1px;
+}
+
+.skill-item p {
+    color: rgba(255, 255, 255, 0.6);
+    font-size: 0.9rem;
+    line-height: 1.6;
+    font-weight: 300;
+}
+
+.contact-links {
+    grid-template-columns: repeat(4, 1fr);
+    gap: 5rem;
+    display: flex;
+    /* flex-direction: column; */
+    /* gap: 1.5rem; */
+    margin-top: 1rem;
+}
+
+.contact-link {
+    color: rgba(255, 255, 255, 0.7);
+    text-decoration: none;
+    font-size: 1.1rem;
+    display: flex;
+    align-items: center;
+    gap: 1rem;
+    transition: all 0.3s ease;
+    padding: 0.8rem 0;
+    
+}
+
+.contact-link i {
+    font-size: 1.2rem;
+    width: 24px;
+}
+
+.contact-link:hover {
+    color: #fff;
+    transform: translateX(10px);
+}
+
+/* 菜单面板图片响应式 */
+@media (max-width: 1400px) {
+    .menu-left {
+        padding: 12rem;
+    }
+}
+
+@media (max-width: 1200px) {
+    .menu-content {
+        grid-template-columns: 1fr;
+        padding: 40px 5vw;
+        height: 100vh;
+        overflow-y: auto;
+    }
+
+    .menu-right {
+        padding: 0;
+        gap: 1.5rem;
+    }
+
+    .menu-left {
+        padding: 8rem;
+        height: 50vh;
+    }
+
+    .profile-image {
+        max-height: 500px;
+    }
+}
+
+@media (max-width: 992px) {
+    .menu-left {
+        padding: 6rem;
+        height: 40vh;
+    }
+
+    .profile-image {
+        max-height: 400px;
+    }
+}
+
+@media screen and (max-width: 768px) {
+    .menu-panel {
+        flex-direction: column;
+    }
+
+    .menu-left {
+        width: 100%;
+        height: 300px;
+        padding: 0;
+    }
+
+    .profile-image {
+        width: 100%;
+        height: 100%;
+    }
+
+    .profile-image img {
+        width: 100%;
+        height: 100%;
+        object-fit: cover;
+    }
+
+    .menu-right {
+        width: 100%;
+        margin-right: 0;
+        padding: 2rem;
+        background: #000;
+    }
+
+    .skills-grid {
+        grid-template-columns: repeat(2, 1fr);
+        gap: 1rem;
+    }
+
+    .about-text p {
+        font-size: 0.9rem;
+        line-height: 1.6;
+    }
+
+    .contact-links {
+        flex-direction: column;
+        gap: 1rem;
+    }
+
+    .contact-link {
+        padding: 0.5rem 0;
+    }
+}
+
+@media screen and (max-width: 480px) {
+    .menu-left {
+        height: 200px;
+    }
+
+    .menu-right {
+        padding: 1.5rem;
+    }
+
+    .skills-grid {
+        grid-template-columns: 1fr;
+        gap: 1rem;
+    }
+
+    .about-text h2 {
+        font-size: 1.5rem;
+    }
+
+    .about-text p {
+        font-size: 0.85rem;
+    }
+
+    .skill-item h3 {
+        font-size: 1rem;
+    }
+
+    .skill-item p {
+        font-size: 0.8rem;
+    }
+
+    .contact-link {
+        font-size: 0.9rem;
+    }
+}
+
+.close-menu-button {
+    position: fixed;
+    top: 30px;
+    right: 30px;
+    background: none;
+    border: none;
+    color: white;
+    font-size: 24px;
+    cursor: pointer;
+    z-index: 1000;
+    width: 40px;
+    height: 40px;
+    display: flex;
+    align-items: center;
+    justify-content: center;
+    border-radius: 50%;
+    background: rgba(255, 255, 255, 0.1);
+    transition: all 0.3s ease;
+}
+
+.close-menu-button:hover {
+    background: rgba(255, 255, 255, 0.2);
+    transform: rotate(90deg);
+}
+
+/* 基础滚动设置 */
+html {
+    scroll-behavior: auto;
+    background: #1b1b1b;
+    margin: 0;
+    padding: 0;
+}
+
+body {
+    overflow-y: auto;
+    background: #1b1b1b;
+    margin: 0;
+    padding: 0;
+}
+
+/* 显示默认滚动条 */
+* {
+    -ms-overflow-style: auto;
+    scrollbar-width: auto;
+}
+
+*::-webkit-scrollbar {
+    display: block;
+    width: 8px;
+    height: 8px;
+    cursor: auto !important;
+}
+
+*::-webkit-scrollbar-track {
+    background: rgba(255, 255, 255, 0.05);
+    cursor: auto !important;
+}
+
+*::-webkit-scrollbar-thumb {
+    background: rgba(255, 255, 255, 0.2);
+    border-radius: 4px;
+    cursor: auto !important;
+}
+
+*::-webkit-scrollbar-thumb:hover {
+    background: rgba(255, 255, 255, 0.3);
+    cursor: auto !important;
+}
+
+/* 自定义滚动条轨道 */
+.scroll-track {
+    position: fixed;
+    top: 0;
+    right: 4px;
+    width: 6px;
+    height: 100vh;
+    background: rgba(255, 255, 255, 0.05);
+    z-index: 1000;
+}
+
+/* 自定义滚动条滑块 */
+.scroll-thumb {
+    position: fixed;
+    top: 0;
+    right: 4px;
+    width: 6px;
+    background: rgba(255, 255, 255, 0.2);
+    border-radius: 3px;
+    z-index: 1001;
+    cursor: pointer;
+}
+
+.scroll-thumb:hover {
+    width: 8px;
+    background: rgba(255, 255, 255, 0.3);
+}
+
+.scroll-thumb.dragging {
+    width: 8px;
+    background: rgba(255, 255, 255, 0.4);
+}
+
+/* 音乐控制按钮样式 */
+.audio-control {
+    position: fixed;
+    bottom: 30px;
+    right: 30px;
+    width: 40px;
+    height: 40px;
+    background: rgba(255, 255, 255, 0.1);
+    backdrop-filter: blur(5px);
+    border: 1px solid rgba(255, 255, 255, 0.2);
+    border-radius: 50%;
+    display: flex;
+    align-items: center;
+    justify-content: center;
+    cursor: pointer;
+    z-index: 1000;
+    transition: all 0.3s ease;
+}
+
+.audio-control:hover {
+    background: rgba(255, 255, 255, 0.2);
+    transform: scale(1.1);
+}
+
+.audio-control i {
+    color: #ffffff;
+    font-size: 1.2rem;
+    transition: all 0.3s ease;
+}
+
+.audio-control.playing {
+    animation: pulse 2s infinite;
+}
+
+@keyframes pulse {
+    0% {
+        box-shadow: 0 0 0 0 rgba(255, 255, 255, 0.4);
+    }
+    70% {
+        box-shadow: 0 0 0 10px rgba(255, 255, 255, 0);
+    }
+    100% {
+        box-shadow: 0 0 0 0 rgba(255, 255, 255, 0);
+    }
+}
+
+/* 响应式调整 */
+@media (max-width: 768px) {
+    .audio-control {
+        bottom: 20px;
+        right: 20px;
+        width: 35px;
+        height: 35px;
+    }
+
+    .audio-control i {
+        font-size: 1rem;
+    }
+}
+
+@media (max-width: 480px) {
+    .audio-control {
+        bottom: 15px;
+        right: 15px;
+        width: 30px;
+        height: 30px;
+    }
+
+    .audio-control i {
+        font-size: 0.9rem;
+    }
+}
