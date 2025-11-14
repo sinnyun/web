@@ -59,10 +59,12 @@ function getProjectImages(projectId) {
     return projectImages[projectId] || [];
 }
 
-module.exports = {
-    projectImages,
-    getProjectImages
-};
+if (typeof module !== 'undefined' && module.exports) {
+    module.exports = {
+        projectImages,
+        getProjectImages
+    };
+}
 `;
     return content;
 }

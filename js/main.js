@@ -209,9 +209,14 @@ function initPageScripts() {
     if (!cursorInitialized) {
       initCursor(e);
     }
-    saveMousePosition(e.clientX, e.clientY);
     mouseX = e.clientX;
     mouseY = e.clientY;
+    if (!window.__mouseSaveTs) window.__mouseSaveTs = 0;
+    const now = Date.now();
+    if (now - window.__mouseSaveTs > 500) {
+      saveMousePosition(mouseX, mouseY);
+      window.__mouseSaveTs = now;
+    }
   });
   updateCursor();
 
@@ -231,3 +236,6 @@ if (document.readyState === 'loading') {
 }
 // 导出到全局，供Barba.js切换后调用
 window.initPageScripts = initPageScripts;
+window.addEventListener('beforeunload', () => {
+  saveMousePosition(mouseX, mouseY);
+});

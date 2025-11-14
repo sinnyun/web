@@ -102,9 +102,8 @@ async function loadDetailImages(project) {
         
         // 替换为懒加载实现
         const img = document.createElement('img');
-        img.dataset.src = image.path; // 使用data-src代替src
-        img.loading = "lazy"; // 添加原生懒加载支持
-        img.src = image.path;
+        img.dataset.src = image.path;
+        img.loading = "lazy";
         img.alt = project.title;
         
         img.onerror = () => {
@@ -115,9 +114,11 @@ async function loadDetailImages(project) {
         currentGroup.appendChild(imageDiv);
     });
     
-    // 图片加载完成后初始化滚动效果
     if (typeof initScrollEffects === 'function') {
         setTimeout(initScrollEffects, 500);
+    }
+    if (typeof initLazyLoad === 'function') {
+        setTimeout(initLazyLoad, 100);
     }
 }
 

@@ -382,11 +382,6 @@ const sliderInit = () => {
   // 初始化自动轮播
   startAutoSlide()
 
-  // 初始化图片和文字
-  imageTransition(-1)
-  setTimeout(() => {
-    textTransition(-1)
-  }, 200)
 }
 
 sliderInit()

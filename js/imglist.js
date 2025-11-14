@@ -24,31 +24,30 @@ const projectImages = {
         "16_2.jpg"
     ],
     "2": [
-        "1.jpg",
-        "2 (1).jpg",
-        "2 (2).jpg",
-        "2 (3).jpg",
-        "2.jpg",
-        "3 (1).jpg",
-        "3 (2).jpg",
-        "3 (3).jpg",
-        "3.jpg",
-        "4 (1).jpg",
-        "4 (2).jpg",
-        "4 (3).jpg",
-        "4 (4).jpg",
-        "4 (5).jpg",
-        "4 (6).jpg",
-        "4 (7).jpg",
-        "5 (1).jpg",
-        "5 (2).jpg",
-        "5 (3).jpg",
-        "6 (1).jpg",
-        "6 (2).jpg",
-        "6 (3).jpg",
-        "6 (4).jpg",
-        "6 (5).jpg",
-        "6 (6).jpg"
+        "1_2.jpg",
+        "2_2.jpg",
+        "3_1.jpg",
+        "4_3.jpg",
+        "5_3.jpg",
+        "6_3.jpg",
+        "7_3.jpg",
+        "8_3.jpg",
+        "9_3.jpg",
+        "10_2.jpg",
+        "11_2.jpg",
+        "12_2.jpg",
+        "13_2.jpg",
+        "14_2.jpg",
+        "15_2.jpg",
+        "16_1.jpg",
+        "17_1.jpg",
+        "18_1.jpg",
+        "19_2.jpg",
+        "20_2.jpg",
+        "21_2.jpg",
+        "22_2.jpg",
+        "23_1.jpg",
+        "24_1.jpg"
     ],
     "3": [
         "1 (1).jpg",
@@ -200,7 +199,9 @@ function getProjectImages(projectId) {
     return projectImages[projectId] || [];
 }
 
-module.exports = {
-    projectImages,
-    getProjectImages
-};
+if (typeof module !== 'undefined' && module.exports) {
+    module.exports = {
+        projectImages,
+        getProjectImages
+    };
+}
